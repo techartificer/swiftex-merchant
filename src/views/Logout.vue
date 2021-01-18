@@ -6,7 +6,12 @@ import { mapActions } from 'vuex';
 
 export default {
   async created() {
-    await this.LOGOUT_REQUEST();
+    try {
+      await this.LOGOUT_REQUEST();
+    } catch (err) {
+      // console.log(err);
+      this.$router.push('/');
+    }
   },
   methods: {
     ...mapActions(['LOGOUT_REQUEST']),

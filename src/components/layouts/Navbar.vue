@@ -118,11 +118,9 @@ export default {
     ...mapGetters(['IsLoggedIn', 'Permission']),
     items() {
       switch (this.Permission) {
-        case constants.adminRoles.SUPER_ADMIN:
+        case constants.roles.OWNER:
           return permission.superAdmin;
-        case constants.adminRoles.ADMIN:
-          return permission.admin;
-        case constants.adminRoles.MODERATOR:
+        case constants.roles.MODERATOR:
           return permission.moderator;
         default:
           break;
@@ -147,7 +145,6 @@ export default {
     },
   },
   methods: {
-
     async initialize() {
       return true;
     },
