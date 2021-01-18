@@ -28,9 +28,9 @@ export default {
     },
   },
   actions: {
-    async ADMIN_LOGIN_REQUEST({ commit }, payload) {
+    async MERCHANT_LOGIN_REQUEST({ commit }, payload) {
       try {
-        const { data } = await instance.post('/auth/admin/login', payload);
+        const { data } = await instance.post('/auth/merchant/login', payload);
         commit('SET_AUTH_DATA', data?.data);
         return data;
       } catch (err) {
