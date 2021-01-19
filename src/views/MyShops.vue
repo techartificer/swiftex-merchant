@@ -47,6 +47,7 @@ export default {
 <style lang="scss" scoped>
 .my-shops {
     padding-left: 10px;
+    padding-bottom: 200px;
     &-head {
     color: #454446;
     width: fit-content;

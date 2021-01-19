@@ -25,6 +25,27 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
+    <v-bottom-navigation
+      fixed
+      v-show="isMobile"
+    >
+      <v-text-field
+        v-model="searchItem"
+        class="fixed-width"
+        single-line
+        outlined
+        dense
+        label="Type percel id here"
+        color="secondary"
+        :loading="isSearching"
+        ></v-text-field>
+        <v-btn
+        dark
+        class="ml_-1"
+        color="secondary"
+        depressed
+        >Track Percel</v-btn>
+    </v-bottom-navigation>
     <v-app-bar
       app
       clipped-left
@@ -37,6 +58,7 @@
       </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-text-field
+        v-if="!isMobile"
         v-model="searchItem"
         class="mt-6 fixed-width"
         single-line
@@ -47,6 +69,7 @@
         :loading="isSearching"
         ></v-text-field>
         <v-btn
+        v-show="!isMobile"
         dark
         class="ml_-1"
         color="black"
@@ -276,6 +299,10 @@ img.logo {
   height: 40px !important;
   margin-left: -4px;
   margin-bottom: 2px;
+  color: #fff !important;
+}
+.ml_-1:hover {
+  color: #fff !important;
 }
 .fixed-width {
   width: 30px;
