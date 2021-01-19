@@ -50,6 +50,6 @@ export default {
     font-size: 28px;
     border-bottom: 3px solid #c83843;
     font-weight: 400;
-}
+  }
 }
 </style>
