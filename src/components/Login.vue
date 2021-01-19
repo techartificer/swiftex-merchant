@@ -61,8 +61,8 @@ export default {
   data() {
     return {
       prefixText: '',
-      phone: '',
-      password: '',
+      phone: '01797459062',
+      password: '@sadat642',
       isLoading: false,
     };
   },

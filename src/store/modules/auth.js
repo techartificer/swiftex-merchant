@@ -34,7 +34,6 @@ export default {
         commit('SET_AUTH_DATA', data?.data);
         return data;
       } catch (err) {
-        console.log(err);
         return Promise.reject(err);
       }
     },

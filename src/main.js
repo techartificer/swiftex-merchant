@@ -35,7 +35,6 @@ instance.interceptors.request.use(async (config) => {
     }
     return config;
   } catch (err) {
-    console.error(err);
     return Promise.reject(err);
   }
 }, undefined);

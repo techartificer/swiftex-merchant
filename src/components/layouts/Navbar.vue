@@ -49,6 +49,8 @@
           <v-icon>mdi-bell</v-icon>
         </v-btn>
         <v-menu
+        v-if="CurrentShop"
+        open-on-hover
         bottom
         transition="slide-y-transition"
         offset-y
@@ -57,15 +59,14 @@
           <template v-slot:activator="{ on, attrs }">
             <v-btn
             class="ml-0 mr-0"
-            color="primary"
+            color="secondary"
             rounded
             text
-            fab
-            small
+            outlined
             v-bind="attrs"
             v-on="on"
             >
-              <v-icon >mdi-account</v-icon>
+              {{CurrentShop.name}} <v-icon> mdi-chevron-down</v-icon>
             </v-btn>
           </template>
 
@@ -73,26 +74,44 @@
           dense
           rounded>
             <v-list-item
-              v-for="(item, index) in accountItems"
+              v-for="(item, index) in MyShops"
               :key="index"
               link
-              @click="goToRoute(item.to)"
+              @click="goToRoute(`/shop/${item.id}`)"
+              color="error"
             >
-              <v-list-item-icon>
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
+                <v-list-item-title
+                :class="{'list-tile': item.id === CurrentShop.id}"
+                >{{ item.name }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item
+              link
+              @click="goToRoute(`/shop/create`)"
+            >
+              <v-list-item-content>
+                <v-list-item-title>Create New</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
         </v-menu>
+        <v-btn
+        v-if="!CurrentShop"
+        class="ml-0 mr-0"
+        color="secondary"
+        rounded
+        text
+        outlined
+        :loading="isInit">
+          Create <v-icon> mdi-plus</v-icon>
+        </v-btn>
     </v-app-bar>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import constants from '../../constants';
 import permission from '../../constants/permission';
 
@@ -105,17 +124,14 @@ export default {
     timeoutId: null,
     drawer: true,
     bottomNav: true,
-    accountItems: [
-      { icon: 'mdi-account', title: 'Profile', to: '/profile' },
-      { icon: 'mdi-logout', title: 'Logout', to: '/logout' },
-    ],
+    isInit: true,
   }),
   created() {
     this.$vuetify.theme.dark = false;
     this.initialize();
   },
   computed: {
-    ...mapGetters(['IsLoggedIn', 'Permission']),
+    ...mapGetters(['IsLoggedIn', 'Permission', 'MyShops', 'CurrentShop']),
     items() {
       switch (this.Permission) {
         case constants.roles.OWNER:
@@ -145,8 +161,16 @@ export default {
     },
   },
   methods: {
+    ...mapActions(['MY_SHOPS_REQUEST', 'SHOP_BY_ID_REQUEST']),
     async initialize() {
-      return true;
+      const currentShopId = localStorage.getItem('currentShopId');
+      await this.MY_SHOPS_REQUEST();
+      if (!currentShopId) {
+        await this.SHOP_BY_ID_REQUEST(this.MyShops[0]?.id);
+      } else {
+        await this.SHOP_BY_ID_REQUEST(currentShopId);
+      }
+      this.isInit = false;
     },
     goToRoute(r) {
       if (this.$route.path !== r) {
@@ -157,6 +181,7 @@ export default {
       if (this.$route.path !== '/') {
         this.$router.push('/');
       }
+      this.initialize();
     },
   },
 };
@@ -208,8 +233,11 @@ span.light {
 }
 img.logo {
   margin-left: -20px;
-    height: 50px;
-    margin-top: 10px;
-    cursor: pointer;
+  height: 50px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.list-tile {
+  color: #c83843;
 }
 </style>
