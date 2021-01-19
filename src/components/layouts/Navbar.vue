@@ -17,9 +17,9 @@
           @click="goToRoute(item.to)"
         >
           <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon :class="{active: item.to===routePath}">{{ item.icon }}</v-icon>
           </v-list-item-icon>
-          <v-list-item-content>
+          <v-list-item-content :class="{active: item.to===routePath}">
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -143,6 +143,9 @@ export default {
       }
       return permission.common;
     },
+    routePath() {
+      return this.$route.path;
+    },
     isMobile() {
       // eslint-disable-next-line default-case
       switch (this.$vuetify.breakpoint.name) {
@@ -239,5 +242,8 @@ img.logo {
 }
 .list-tile {
   color: #c83843;
+}
+.active {
+  color: #c83843 !important;
 }
 </style>
