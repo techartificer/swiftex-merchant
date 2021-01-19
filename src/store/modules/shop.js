@@ -1,3 +1,4 @@
+import constants from '../../constants';
 import instance from '../../helpers/axios';
 
 export default {
@@ -8,7 +9,7 @@ export default {
   mutations: {
     SET_SHOP_DATA(state, data) {
       state.shop = data;
-      localStorage.setItem('currentShopId', data?.id);
+      localStorage.setItem(constants.CURRENT_SHOP_ID, data?.id);
     },
     SET_MY_SHOPS(state, data) {
       state.myShops = data;

@@ -7,4 +7,8 @@ module.exports = {
     OWNER: 'Owner',
     MODERATOR: 'Moderator',
   },
+  PERMISSION: 'permission',
+  ACCESS_TOKEN: 'accessToken',
+  REFRESH_TOKEN: 'refreshToken',
+  CURRENT_SHOP_ID: 'currentShopId',
 };

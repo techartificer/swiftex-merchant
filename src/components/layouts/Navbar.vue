@@ -135,7 +135,7 @@ export default {
     items() {
       switch (this.Permission) {
         case constants.roles.OWNER:
-          return permission.superAdmin;
+          return permission.OWNER;
         case constants.roles.MODERATOR:
           return permission.moderator;
         default:
@@ -163,7 +163,7 @@ export default {
   methods: {
     ...mapActions(['MY_SHOPS_REQUEST', 'SHOP_BY_ID_REQUEST']),
     async initialize() {
-      const currentShopId = localStorage.getItem('currentShopId');
+      const currentShopId = localStorage.getItem(constants.CURRENT_SHOP_ID);
       await this.MY_SHOPS_REQUEST();
       if (!currentShopId) {
         await this.SHOP_BY_ID_REQUEST(this.MyShops[0]?.id);

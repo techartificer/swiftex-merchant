@@ -1,30 +1,32 @@
 import axios from 'axios';
 import instance from '../../helpers/axios';
 import { baseURL } from '../../constants/api';
+import constants from '../../constants';
 
 export default {
   state: {
-    accessToken: localStorage.getItem('accessToken'),
-    refreshToken: localStorage.getItem('refreshToken'),
-    permission: localStorage.getItem('permission'),
+    accessToken: localStorage.getItem(constants.ACCESS_TOKEN),
+    refreshToken: localStorage.getItem(constants.REFRESH_TOKEN),
+    permission: localStorage.getItem(constants.PERMISSION),
   },
   mutations: {
     SET_AUTH_DATA(state, { accessToken, refreshToken, permission }) {
       state.accessToken = accessToken;
       state.refreshToken = refreshToken;
-      if (accessToken) { localStorage.setItem('accessToken', accessToken); }
-      if (refreshToken) { localStorage.setItem('refreshToken', refreshToken); }
+      if (accessToken) { localStorage.setItem(constants.ACCESS_TOKEN, accessToken); }
+      if (refreshToken) { localStorage.setItem(constants.REFRESH_TOKEN, refreshToken); }
       if (permission) {
         state.permission = permission;
-        localStorage.setItem('permission', permission);
+        localStorage.setItem(constants.PERMISSION, permission);
       }
     },
     CLEAR_AUTH_DATA(state) {
       state.accessToken = null;
       state.refreshToken = null;
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('permission');
+      localStorage.removeItem(constants.ACCESS_TOKEN);
+      localStorage.removeItem(constants.REFRESH_TOKEN);
+      localStorage.removeItem(constants.PERMISSION);
+      localStorage.removeItem(constants.CURRENT_SHOP_ID);
     },
   },
   actions: {
