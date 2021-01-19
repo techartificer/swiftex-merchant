@@ -36,8 +36,23 @@
           class="logo">
       </v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-text-field
+        v-model="searchItem"
+        class="mt-6 fixed-width"
+        single-line
+        outlined
+        dense
+        label="Type percel id here"
+        color="secondary"
+        :loading="isSearching"
+        ></v-text-field>
+        <v-btn
+        dark
+        class="ml_-1"
+        color="black"
+        elevation="0"
+        >Track Percel</v-btn>
         <v-spacer></v-spacer>
-
         <v-btn
         small
         fab
@@ -137,7 +152,7 @@ export default {
         case constants.roles.OWNER:
           return permission.OWNER;
         case constants.roles.MODERATOR:
-          return permission.moderator;
+          return permission.MODERATOR;
         default:
           break;
       }
@@ -244,6 +259,16 @@ img.logo {
   color: #c83843;
 }
 .active {
+  color: #c83843 !important;
+}
+.ml_-1 {
+  height: 40px !important;
+  margin-left: -4px;
+  margin-bottom: 2px;
+}
+.fixed-width {
+  width: 30px;
+  border-color: #c83843 !important;
   color: #c83843 !important;
 }
 </style>

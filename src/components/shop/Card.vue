@@ -8,7 +8,7 @@
     <v-card-title @click="setCurrentShop" class="pointer">{{shop.name}}</v-card-title>
     <v-card-text class="text--primary pointer" @click="setCurrentShop">
       <div> {{shop.address}}</div>
-      <div class="pt-1">{{shop.phone}}</div>
+      <div class="pt-1">+{{shop.phone}}</div>
     </v-card-text>
     <v-card-actions>
       <v-icon color="secondary">mdi-check-circle</v-icon>

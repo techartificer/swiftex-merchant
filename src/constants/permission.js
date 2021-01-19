@@ -6,6 +6,7 @@ const MODERATOR = [
   { icon: 'mdi-ticket-percent', title: 'Coupon', to: '/coupon' },
   { icon: 'mdi-map', title: 'Coverage Area', to: '/area' },
   { icon: 'mdi-alert-octagon', title: 'Raise Issue', to: '/issue' },
+  { icon: 'mdi-alert-octagon', title: 'Logout', to: '/logout' },
 ];
 const OWNER = [
   { icon: 'mdi-view-dashboard', title: 'Dashboard', to: '/' },
@@ -17,6 +18,7 @@ const OWNER = [
   { icon: 'mdi-ticket-percent', title: 'Coupon', to: '/coupon' },
   { icon: 'mdi-map', title: 'Coverage Area', to: '/area' },
   { icon: 'mdi-alert-octagon', title: 'Raise Issue', to: '/issue' },
+  { icon: 'mdi-logout', title: 'Logout', to: '/logout' },
 ];
 const COMMON = [];
 
