@@ -16,7 +16,7 @@ export default {
     },
     ADD_SHOP(state, data) {
       const shops = state.myShops?.splice(0);
-      state.myShops = [data, ...shops];
+      state.myShops = [...shops, data];
     },
   },
   actions: {

@@ -108,6 +108,7 @@
                 rounded
                 color="secondary"
                 @click="handleAction"
+                :loading="isLoading"
                 >
                 {{isCreateForm ? 'Create' : 'Update'}}
                 </v-btn>
@@ -136,6 +137,7 @@ export default {
     pickupAddress: '',
     pickupArea: '',
     isCreateForm: false,
+    isLoading: false,
   }),
   computed: {
     pickupAreas() {
@@ -167,8 +169,8 @@ export default {
         const {
           name, address, pickupArea, phone, fbPage, pickupAddress, email, deliveryZone, id,
         } = data;
-        this.shopMongoId = id;
         this.name = name;
+        this.shopMongoId = id;
         this.address = address;
         this.pickupArea = pickupArea;
         this.phone = phone?.substr(2, phone.length);
@@ -186,7 +188,7 @@ export default {
     });
   },
   methods: {
-    ...mapActions(['']),
+    ...mapActions(['CREATE_SHOP_REQUEST']),
     crateNewShop() {
       this.show = true;
       if (!this.isCreateForm) {
@@ -196,7 +198,6 @@ export default {
     },
     validdateForm() {
       let isValid = true;
-      console.log(this.$refs);
       Object.keys(this.form).forEach((f) => {
         if (!this.form[f]) isValid = false;
         this.$refs[f].validate(true);
@@ -205,22 +206,27 @@ export default {
     },
     resetForm() {
       Object.keys(this.form).forEach((f) => {
-        this.$refs[f].reset();
+        if (this.$refs[f]) { this.$refs[f].reset(); }
       });
     },
     async handleAction() {
       try {
+        this.isLoading = true;
         const v = this.validdateForm();
         const { isValid, number } = formatNumber(`+88${this.phone}`);
         if (v && isValid) {
           this.form.phone = number;
           if (this.isCreateForm) {
-            // create new shop
+            await this.CREATE_SHOP_REQUEST(this.form);
+            this.resetForm();
+            this.show = false;
+            this.$toast.success('Shop created successfully');
           }
         }
       } catch (err) {
         console.log(err);
       }
+      this.isLoading = false;
     },
   },
 };
