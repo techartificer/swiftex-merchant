@@ -77,7 +77,7 @@
                   dense> </v-textarea>
                   <v-text-field
                   ref="email"
-                  :rules="[() => !!email || 'This field is required' ]"
+                  :rules="[() => !!email || 'This field is required', emailValidate ]"
                   v-model="email"
                   label="Email"
                   dense
@@ -140,6 +140,9 @@ export default {
     isLoading: false,
   }),
   computed: {
+    emailValidate() {
+      return constants.EMAIL_REGEX.test(String(this.email)) || 'Email is not valid';
+    },
     pickupAreas() {
       return ['Uttara', 'Savar', 'Mohakhali', 'Banani', 'Dhaka'];
     },
@@ -224,7 +227,7 @@ export default {
           }
         }
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
       this.isLoading = false;
     },

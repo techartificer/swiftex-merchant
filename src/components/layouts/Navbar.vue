@@ -103,7 +103,7 @@
             </v-list-item>
             <v-list-item
               link
-              @click="goToRoute(`/my-shops?create=true`)"
+              @click="createNewShop"
             >
               <v-list-item-content>
                 <v-list-item-title>Create New</v-list-item-title>
@@ -129,6 +129,7 @@
 import { mapGetters, mapActions } from 'vuex';
 import constants from '../../constants';
 import permission from '../../constants/permission';
+import eventBus from '../../helpers/eventBus';
 
 export default {
   components: {
@@ -189,6 +190,13 @@ export default {
         await this.SHOP_BY_ID_REQUEST(currentShopId);
       }
       this.isInit = false;
+    },
+    createNewShop() {
+      if (this.$route.path === '/my-shops') {
+        eventBus.$emit(constants.events.SHOW_SHOP_CU_DIALOG, null);
+      } else {
+        this.goToRoute('/my-shops?create=true');
+      }
     },
     goToRoute(r) {
       if (this.$route.path !== r) {

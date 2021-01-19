@@ -39,6 +39,7 @@ export default {
     const { query: { create } } = this.$route;
     if (create) {
       eventBus.$emit(constants.events.SHOW_SHOP_CU_DIALOG, null);
+      this.$router.push('/my-shops');
     }
   },
 };
