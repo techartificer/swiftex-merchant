@@ -92,7 +92,7 @@
               v-for="(item, index) in MyShops"
               :key="index"
               link
-              @click="goToRoute(`/shop/${item.id}`)"
+              @click="setShop(item.id)"
               color="error"
             >
               <v-list-item-content>
@@ -103,7 +103,7 @@
             </v-list-item>
             <v-list-item
               link
-              @click="goToRoute(`/shop/create`)"
+              @click="goToRoute(`/my-shops?create=true`)"
             >
               <v-list-item-content>
                 <v-list-item-title>Create New</v-list-item-title>
@@ -194,6 +194,9 @@ export default {
       if (this.$route.path !== r) {
         this.$router.push(r);
       }
+    },
+    async setShop(id) {
+      await this.SHOP_BY_ID_REQUEST(id);
     },
     goToHome() {
       if (this.$route.path !== '/') {

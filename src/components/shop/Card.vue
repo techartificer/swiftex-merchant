@@ -26,14 +26,17 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import constants from '../../constants';
 import eventBus from '../../helpers/eventBus';
 
 export default {
   props: ['shop'],
   methods: {
-    setCurrentShop() {
-      console.log('setCurrentShop');
+    ...mapActions(['SHOP_BY_ID_REQUEST']),
+    async setCurrentShop() {
+      await this.SHOP_BY_ID_REQUEST(this.shop.id);
+      this.$router.push('/');
     },
     editShop() {
       eventBus.$emit(constants.events.SHOW_SHOP_CU_DIALOG, this.shop);

@@ -21,6 +21,9 @@ import { mapGetters } from 'vuex';
 import CreateShopCard from '../components/shop/CreateCard.vue';
 import ShopCard from '../components/shop/Card.vue';
 import ShopDialog from '../components/shop/Dialog.vue';
+import eventBus from '../helpers/eventBus';
+import constants from '../constants';
+// import eventBus from '../helpers/eventBus';
 
 export default {
   components: {
@@ -28,18 +31,15 @@ export default {
     ShopCard,
     ShopDialog,
   },
-  data: () => ({
-    shops: [
-      { name: 'Fresh Agric', address: 'Dahak, Bangladesh', phone: '01710027639' },
-      { name: 'Fresh Agric', address: 'Dahak, Bangladesh', phone: '01710027639' },
-      { name: 'Fresh Agric', address: 'Dahak, Bangladesh', phone: '01710027639' },
-      { name: 'Fresh Agric', address: 'Dahak, Bangladesh', phone: '01710027639' },
-      { name: 'Fresh Agric', address: 'Dahak, Bangladesh', phone: '01710027639' },
-      { name: 'Fresh Agric', address: 'Dahak, Bangladesh', phone: '01710027639' },
-    ],
-  }),
+  data: () => ({}),
   computed: {
     ...mapGetters(['MyShops']),
+  },
+  mounted() {
+    const { query: { create } } = this.$route;
+    if (create) {
+      eventBus.$emit(constants.events.SHOW_SHOP_CU_DIALOG, null);
+    }
   },
 };
 </script>

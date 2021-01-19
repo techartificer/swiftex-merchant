@@ -1,6 +1,7 @@
 <template>
   <div>
     <Login v-if="!IsLoggedIn"/>
+    <div v-else> {{CurrentShop}}</div>
   </div>
 </template>
 
@@ -15,7 +16,7 @@ export default {
     Login,
   },
   computed: {
-    ...mapGetters(['IsLoggedIn']),
+    ...mapGetters(['IsLoggedIn', 'CurrentShop']),
   },
 };
 </script>
