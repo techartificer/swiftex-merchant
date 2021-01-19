@@ -14,6 +14,10 @@ export default {
     SET_MY_SHOPS(state, data) {
       state.myShops = data;
     },
+    ADD_SHOP(state, data) {
+      const shops = state.myShops?.splice(0);
+      state.myShops = [data, ...shops];
+    },
   },
   actions: {
     async SHOP_BY_ID_REQUEST({ commit }, id) {
@@ -25,10 +29,10 @@ export default {
         return Promise.reject(err);
       }
     },
-    // eslint-disable-next-line no-unused-vars
     async CREATE_SHOP_REQUEST({ commit }, payload) {
       try {
         const { data } = await instance.post('/shop/create', payload);
+        commit('ADD_SHOP', data?.data);
         return data?.data;
       } catch (err) {
         return Promise.reject(err);

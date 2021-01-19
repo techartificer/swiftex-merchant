@@ -7,6 +7,9 @@ module.exports = {
     OWNER: 'Owner',
     MODERATOR: 'Moderator',
   },
+  events: {
+    SHOW_SHOP_CU_DIALOG: 'showShopCreateUpdateDialog',
+  },
   PERMISSION: 'permission',
   ACCESS_TOKEN: 'accessToken',
   REFRESH_TOKEN: 'refreshToken',

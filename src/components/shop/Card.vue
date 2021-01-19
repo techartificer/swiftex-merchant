@@ -26,6 +26,9 @@
 </template>
 
 <script>
+import constants from '../../constants';
+import eventBus from '../../helpers/eventBus';
+
 export default {
   props: ['shop'],
   methods: {
@@ -33,7 +36,7 @@ export default {
       console.log('setCurrentShop');
     },
     editShop() {
-      console.log('editShop');
+      eventBus.$emit(constants.events.SHOW_SHOP_CU_DIALOG, this.shop);
     },
   },
 };

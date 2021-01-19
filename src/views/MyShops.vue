@@ -1,5 +1,6 @@
 <template>
   <div class="my-shops">
+    <shop-dialog />
     <div class="my-shops-head"
     >My Shops</div>
     <v-row dense>
@@ -19,11 +20,13 @@
 import { mapGetters } from 'vuex';
 import CreateShopCard from '../components/shop/CreateCard.vue';
 import ShopCard from '../components/shop/Card.vue';
+import ShopDialog from '../components/shop/Dialog.vue';
 
 export default {
   components: {
     CreateShopCard,
     ShopCard,
+    ShopDialog,
   },
   data: () => ({
     shops: [
