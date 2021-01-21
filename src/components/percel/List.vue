@@ -1,19 +1,116 @@
 <template>
   <div>
     <template>
+      <v-card
+      class="mr-2 mb-8"
+      outlined>
+        <v-card-text>
+          <v-row dense>
+            <v-col>
+              <v-text-field
+              v-model="phone"
+              single-line
+              outlined
+              dense
+              label="Phone"> </v-text-field>
+            </v-col>
+            <v-col>
+              <v-text-field
+              v-model="trackId"
+              single-line
+              outlined
+              dense
+              label="Track ID"> </v-text-field>
+            </v-col>
+            <v-col>
+              <v-dialog
+                light
+                ref="dialog"
+                v-model="modal"
+                :return-value.sync="dates"
+                persistent
+                width="290px"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="dateRangeText"
+                    single-line
+                    outlined
+                    dense
+                    label="Date range"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="dates"
+                  scrollable
+                  range
+                >
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="modal = false"
+                  >
+                    Cancel
+                  </v-btn>
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="$refs.dialog.save(dates)"
+                  >
+                    OK
+                  </v-btn>
+                </v-date-picker>
+              </v-dialog>
+            </v-col>
+            <v-col cols="lg-3">
+                <v-btn
+                depressed
+                class="mr-1"
+                color="primary">Search</v-btn>
+                <v-btn
+                @click="resetSearchField"
+                depressed
+                color="primary">Reset</v-btn>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
       <v-data-table
         :headers="headers"
         :items="Orders"
         class="elevation-0"
         :loading="isInit"
       >
+
         <template v-slot:item.recipientPhone="{ item }">
           {{item.recipientPhone.substr(2)}}
+        </template>
+        <template v-slot:item.trackId="{ item }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-chip
+                small
+                @click="getColor"
+                color="black"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                {{item.trackId.substr(2)}}
+              </v-chip>
+            </template>
+            <span>Track percel</span>
+          </v-tooltip>
         </template>
         <template v-slot:item.isAccepted="{ item }">
           <v-chip
             :color="getColor(item.isAccepted)"
             dark
+            small
           >
             {{ item.isAccepted ? 'Yes' : 'No' }}
           </v-chip>
@@ -25,6 +122,7 @@
           <v-chip
             :color="getDeliveredAt(item.deliverdAt).color"
             dark
+            small
           >
           {{getDeliveredAt(item.deliverdAt).time}}
           </v-chip>
@@ -45,6 +143,13 @@
           </v-icon>
         </template>
       </v-data-table>
+      <div class="text-center pt-2">
+        <v-btn
+        :disabled="!hasMore"
+        color="secondary"
+        rounded
+        small>Load More</v-btn>
+    </div>
     </template>
   </div>
 </template>
@@ -54,10 +159,21 @@ import moment from 'moment';
 
 export default {
   data: () => ({
+    phone: '',
+    trackId: '',
+    dates: [],
+    modal: false,
+    hasMore: false,
     isInit: true,
+    page: 1,
+    pageCount: 0,
+    itemsPerPage: 10,
   }),
   computed: {
     ...mapGetters(['Orders', 'CurrentShop']),
+    dateRangeText() {
+      return this.dates.join(' ~ ');
+    },
     headers() {
       return [
         {
@@ -70,11 +186,9 @@ export default {
         { text: 'Track ID', value: 'trackId' },
         { text: 'Accepted', value: 'isAccepted' },
         { text: 'Area', value: 'recipientArea' },
-        { text: 'Thana', value: 'recipientThana' },
         { text: 'City', value: 'recipientCity' },
         { text: 'Price', value: 'price' },
         { text: 'Type', value: 'parcelType' },
-        { text: 'Delivery Time', value: 'requestedDeliveryTime' },
         { text: 'Delivery Type', value: 'deliveryType' },
         { text: '# of Items', value: 'numberOfItems' },
         { text: 'Delivered', value: 'deliverdAt' },
@@ -86,15 +200,29 @@ export default {
     this.intialize();
   },
   watch: {
-    // eslint-disable-next-line no-unused-vars
-    CurrentShop(val) {
+    CurrentShop() {
       this.intialize();
+    },
+    phone() {
+      this.phone = this.phone.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+      this.trackId = '';
+    },
+    trackId() {
+      this.phone = '';
+    },
+    dates() {
+      this.trackId = '';
     },
   },
   methods: {
     ...mapActions(['ORDERS_REQUEST']),
     viewPercel(item) {
       console.log(item);
+    },
+    resetSearchField() {
+      this.dates = [];
+      this.phone = '';
+      this.trackId = '';
     },
     async intialize() {
       if (!this.CurrentShop) return;
