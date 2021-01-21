@@ -27,6 +27,14 @@ const routes = [
       requiresAuth: true,
     },
   },
+  {
+    path: '/percels',
+    name: 'Percels',
+    component: () => import('../views/Percels'),
+    meta: {
+      requiresAuth: true,
+    },
+  },
   // {
   //   path: '/*',
   //   name: '404',

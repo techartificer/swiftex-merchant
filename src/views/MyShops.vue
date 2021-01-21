@@ -1,7 +1,7 @@
 <template>
-  <div class="my-shops">
+  <div class="root">
     <shop-dialog />
-    <div class="my-shops-head"
+    <div class="head"
     >My Shops</div>
     <v-row dense>
       <v-col
@@ -45,16 +45,4 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.my-shops {
-    padding-left: 10px;
-    padding-bottom: 200px;
-    &-head {
-    color: #454446;
-    width: fit-content;
-    margin: 20px 0px;
-    font-size: 28px;
-    border-bottom: 3px solid #c83843;
-    font-weight: 400;
-  }
-}
 </style>
