@@ -203,7 +203,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['MY_SHOPS_REQUEST', 'SHOP_BY_ID_REQUEST']),
+    ...mapActions(['MY_SHOPS_REQUEST', 'SHOP_BY_ID_REQUEST', 'ORDERS_REQUEST']),
     async initialize() {
       const currentShopId = localStorage.getItem(constants.CURRENT_SHOP_ID);
       await this.MY_SHOPS_REQUEST();

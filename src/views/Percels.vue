@@ -8,13 +8,17 @@
 
       </div>
       <div class="order-list">
-
+        <list />
       </div>
     </div>
   </div>
 </template>
 <script>
-export default {
+import List from '../components/percel/List.vue';
 
+export default {
+  components: {
+    List,
+  },
 };
 </script>
