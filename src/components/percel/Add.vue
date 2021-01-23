@@ -14,7 +14,7 @@
           <v-row>
             <v-col>
               <v-text-field
-              ref="name"
+              ref="recipientName"
               v-model="name"
               label="Recipient Name"
               dense
@@ -23,30 +23,30 @@
               </v-text-field>
               <v-autocomplete
               :rules="[() => !!pickupArea || 'This field is required' ]"
-              ref="pickupArea"
-              :items="coverageAreasz"
+              ref="pickHub"
+              :items="coverageAreas"
               outlined
               v-model="pickupArea"
               dense
               label="Pickup area"
             ></v-autocomplete>
             <v-autocomplete
-              ref="deliveryZone"
-              :rules="[() => !!deliveryZone || 'This field is required' ]"
-              :items="coverageAreasz"
+              ref="paymetStatus"
+              :rules="[() => !!paymetStatus || 'This field is required' ]"
+              :items="paymetStatuses"
               outlined
-              v-model="deliveryZone"
+              v-model="paymetStatus"
               dense
-              label="Preferred Delivery Zone"
+              label="Payment Status"
             ></v-autocomplete>
             <v-autocomplete
-              ref="deliveryZone"
+              ref="recipientArea"
               :rules="[() => !!deliveryZone || 'This field is required' ]"
-              :items="coverageAreasz"
+              :items="coverageAreas"
               outlined
               v-model="deliveryZone"
               dense
-              label="Preferred Delivery Zone"
+              label="Delivery Zone"
             ></v-autocomplete>
             <v-text-field
               :rules="[
@@ -63,7 +63,7 @@
               :rules="[
                 () => !!totalNumberOfItems || 'This field is required'
               ]"
-              ref="totalNumberOfItems"
+              ref="numberOfItems"
               v-model="totalNumberOfItems"
               label="Total Number of Items"
               type="number"
@@ -85,14 +85,14 @@
                 () => !!phone || 'This field is required',
                 validatePhoneNumber
               ]"
-              ref="phone"
+              ref="recipientPhone"
               v-model="phone"
               label="Phone Number"
               dense
               outlined>
               </v-text-field>
               <v-text-field
-              ref="city"
+              ref="recipientCity"
               :rules="[() => !!city || 'This field is required']"
               v-model="city"
               label="City"
@@ -102,7 +102,7 @@
               </v-text-field>
               <v-text-field
               :rules="[() => !!thana || 'This field is required' ]"
-              ref="thana"
+              ref="recipientThana"
               v-model="thana"
               label="Delivery Thana"
               type="text"
@@ -113,7 +113,7 @@
               :rules="[
                 () => !!zip || 'This field is required'
               ]"
-              ref="zip"
+              ref="recipientZip"
               v-model="zip"
               label="Zip"
               dense
@@ -128,15 +128,24 @@
               dense
               label="Percel type"
             ></v-autocomplete>
-            <v-textarea
-              :rules="[() => !!address || 'This field is required' ]"
-              ref="address"
+            <v-autocomplete
+              :rules="[() => !!deliveryType || 'This field is required' ]"
+              ref="deliveryType"
+              :items="deliveryTypes"
               outlined
-              v-model="address"
+              v-model="deliveryType"
+              dense
+              label="Delvery type"
+            ></v-autocomplete>
+            <v-textarea
+              :rules="[() => !!recipientAddress || 'This field is required' ]"
+              ref="recipientAddress"
+              outlined
+              v-model="recipientAddress"
               dense
               rows="1"
               auto-grow
-              label="Address"> </v-textarea>
+              label="Recipient Address"> </v-textarea>
             </v-col>
           </v-row>
           </v-card-text>
@@ -164,16 +173,27 @@
 <script>
 import constants from '../../constants';
 import eventBus from '../../helpers/eventBus';
+import { formatNumber } from '../../helpers/phoneNumber';
 
 export default {
   data: () => ({
     thana: '',
     city: '',
+    phone: '',
     recipientArea: '',
     recipientName: '',
     name: '',
-    recipientPhone: '',
     percelType: '',
+    recipientAddress: '',
+    deliveryType: '',
+    zip: '',
+    comments: '',
+    paymetStatus: '',
+    deliveryZone: '',
+    pickupArea: '',
+    price: '',
+    totalNumberOfItems: '',
+    isLoading: false,
   }),
   computed: {
     coverageAreas() {
@@ -182,8 +202,51 @@ export default {
     percelTypes() {
       return ['Documents', 'Products'];
     },
+    paymetStatuses() {
+      return ['COD', 'PAID'];
+    },
+    deliveryTypes() {
+      return ['Regular', 'Express'];
+    },
+    validatePhoneNumber() {
+      const { isValid } = formatNumber(`+88${this.phone}`);
+      if (!isValid) return 'Phone number should be valid';
+      return true;
+    },
+    form() {
+      return {
+        // TODO: fix ref with form key
+        deliveryType: this.deliveryType,
+        numberOfItems: this.totalNumberOfItems,
+        percelType: this.percelType,
+        paymetStatus: this.paymetStatus,
+        // pickrecipientAddress:
+        pickHub: this.pickupArea,
+        recipientAddress: this.recipientAddress,
+        recipientArea: this.deliveryZone,
+        recipientCity: this.city,
+        recipientName: this.name,
+        recipientPhone: this.phone,
+        recipientThana: this.thana,
+        recipientZip: this.zip,
+        comments: this.comments,
+        price: this.price,
+      };
+    },
   },
   methods: {
+    validdateForm() {
+      let isValid = true;
+      Object.keys(this.form).forEach((f) => {
+        if (!this.form[f]) isValid = false;
+        this.$refs[f].validate(true);
+      });
+      return isValid;
+    },
+    handleAction() {
+      const isValid = this.validdateForm();
+      console.log(isValid);
+    },
     closeAddPercel() {
       eventBus.$emit(constants.events.SHOW_ADD_PERCEL_DIALOG, false);
     },
