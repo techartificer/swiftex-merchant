@@ -72,10 +72,14 @@
             </v-col>
             <v-col cols="lg-4">
                 <v-btn
+                :disabled="searchDisabled"
                 depressed
                 class="mr-1"
+                @click="searchHandle"
+                :loading="searchInit"
                 color="primary">Search</v-btn>
                 <v-btn
+                :disabled="searchDisabled"
                 class="mr-1"
                 @click="resetSearchField"
                 depressed
@@ -165,6 +169,8 @@
   </div>
 </template>
 <script>
+/* eslint-disable vue/no-side-effects-in-computed-properties */
+
 import { mapActions, mapGetters } from 'vuex';
 import moment from 'moment';
 import AddPercel from './Add.vue';
@@ -186,10 +192,22 @@ export default {
     page: 1,
     pageCount: 0,
     itemsPerPage: 10,
+    searchInit: false,
+    isSearched: false,
   }),
   computed: {
     ...mapGetters(['Orders', 'CurrentShop']),
+    searchDisabled() {
+      return !this.phone && !this.trackId && this.dates.length !== 2;
+    },
     dateRangeText() {
+      if (this.dates.length === 2) {
+        const [dts, dte] = this.dates;
+        if (new Date(dts) > new Date(dte)) {
+          this.dates[0] = dte;
+          this.dates[1] = dts;
+        }
+      }
       return this.dates.join(' ~ ');
     },
     headers() {
@@ -235,18 +253,48 @@ export default {
     },
   },
   methods: {
+    ...mapActions(['ORDERS_REQUEST']),
     addPercelInit() {
-      // eventBus.$emit(constants.events.SHOW_ADD_PERCEL_DIALOG);
       this.showAddPercel = true;
     },
-    ...mapActions(['ORDERS_REQUEST']),
     viewPercel(item) {
       console.log(item);
+    },
+    async searchHandle() {
+      this.isSearched = true;
+      this.searchInit = true;
+      if (!this.CurrentShop) return;
+      try {
+        let startDate;
+        let endDate;
+        if (this.dates.length === 2) {
+          const stts = new Date(this.dates[0]).valueOf();
+          const ents = new Date(this.dates[1]).valueOf();
+          const startDateTS = Math.min(stts, ents);
+          const endDateTS = Math.max(stts, ents);
+          startDate = new Date(startDateTS).setHours(0, 0, 0, 0);
+          endDate = new Date(endDateTS).setHours(23, 59, 59);
+        }
+        await this.ORDERS_REQUEST({
+          shopId: this.CurrentShop.id,
+          phone: this.phone,
+          trackId: this.trackId,
+          startDate,
+          endDate,
+        });
+      } catch (err) {
+        // err
+      }
+      this.searchInit = false;
     },
     resetSearchField() {
       this.dates = [];
       this.phone = '';
       this.trackId = '';
+      if (this.isSearched) {
+        this.intialize();
+      }
+      this.isSearched = false;
     },
     async intialize() {
       if (!this.CurrentShop) return;

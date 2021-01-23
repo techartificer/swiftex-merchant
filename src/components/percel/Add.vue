@@ -272,10 +272,11 @@ export default {
       this.isLoading = true;
       const validForm = this.validdateForm();
       try {
-        const { isValid } = formatNumber(`+88${this.form?.recipientPhone}`);
+        const { isValid, number } = formatNumber(`+88${this.form?.recipientPhone}`);
         if (validForm && isValid) {
           this.form.numberOfItems = Number(this.form.numberOfItems);
           this.form.price = Number(this.form.price);
+          this.form.recipientPhone = number;
           await this.ORDER_CREATE(this.form);
           this.resetForm();
           this.$toast.success('Order created successfully');
