@@ -1,6 +1,10 @@
 <template>
   <div>
-    <template>
+    <transition name="fade">
+      <add-percel v-if="showAddPercel"/>
+    </transition>
+    <template v-if="!showAddPercel">
+    <transition name="fade">
       <v-card
       class="mr-2 mb-8"
       outlined>
@@ -66,19 +70,26 @@
                 </v-date-picker>
               </v-dialog>
             </v-col>
-            <v-col cols="lg-3">
+            <v-col cols="lg-4">
                 <v-btn
                 depressed
                 class="mr-1"
                 color="primary">Search</v-btn>
                 <v-btn
+                class="mr-1"
                 @click="resetSearchField"
                 depressed
                 color="primary">Reset</v-btn>
+                <v-btn
+                @click="addPercelInit"
+                depressed
+                color="primary">Add Percel</v-btn>
             </v-col>
           </v-row>
         </v-card-text>
       </v-card>
+      </transition>
+
       <v-data-table
         :headers="headers"
         :items="Orders"
@@ -156,9 +167,16 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import moment from 'moment';
+import AddPercel from './Add.vue';
+import eventBus from '../../helpers/eventBus';
+import constants from '../../constants';
 
 export default {
+  components: {
+    AddPercel,
+  },
   data: () => ({
+    showAddPercel: false,
     phone: '',
     trackId: '',
     dates: [],
@@ -198,13 +216,15 @@ export default {
   },
   mounted() {
     this.intialize();
+    eventBus.$on(constants.events.SHOW_ADD_PERCEL_DIALOG, (flag) => {
+      this.showAddPercel = flag;
+    });
   },
   watch: {
     CurrentShop() {
       this.intialize();
     },
     phone() {
-      this.phone = this.phone.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
       this.trackId = '';
     },
     trackId() {
@@ -215,6 +235,10 @@ export default {
     },
   },
   methods: {
+    addPercelInit() {
+      // eventBus.$emit(constants.events.SHOW_ADD_PERCEL_DIALOG);
+      this.showAddPercel = true;
+    },
     ...mapActions(['ORDERS_REQUEST']),
     viewPercel(item) {
       console.log(item);
@@ -254,3 +278,11 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.fade-enter-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+</style>

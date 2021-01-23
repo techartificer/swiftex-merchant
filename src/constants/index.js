@@ -12,10 +12,18 @@ module.exports = {
   },
   events: {
     SHOW_SHOP_CU_DIALOG: 'showShopCreateUpdateDialog',
+    SHOW_ADD_PERCEL_DIALOG: 'showAddPercelDialog',
   },
   PERMISSION: 'permission',
   ACCESS_TOKEN: 'accessToken',
   REFRESH_TOKEN: 'refreshToken',
   CURRENT_SHOP_ID: 'currentShopId',
   EMAIL_REGEX: re,
+  COVERAGE_AREAS: [
+    'Mohakhali',
+    'Banani',
+    'Uttara',
+    'Mirpur',
+    'Bashundhara R/A',
+  ],
 };
