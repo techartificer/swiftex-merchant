@@ -31,11 +31,11 @@
               label="Pickup area"
             ></v-autocomplete>
             <v-autocomplete
-              ref="paymetStatus"
-              :rules="[() => !!paymetStatus || 'This field is required' ]"
-              :items="paymetStatuses"
+              ref="paymentStatus"
+              :rules="[() => !!paymentStatus || 'This field is required' ]"
+              :items="paymentStatuses"
               outlined
-              v-model="paymetStatus"
+              v-model="paymentStatus"
               dense
               label="Payment Status"
             ></v-autocomplete>
@@ -70,6 +70,15 @@
               dense
               outlined>
             </v-text-field>
+            <v-textarea
+              :rules="[() => !!pickAddress || 'This field is required' ]"
+              ref="pickAddress"
+              outlined
+              v-model="pickAddress"
+              dense
+              rows="1"
+              auto-grow
+              label="Pick Address"> </v-textarea>
             <v-textarea
               ref="comments"
               outlined
@@ -146,6 +155,13 @@
               rows="1"
               auto-grow
               label="Recipient Address"> </v-textarea>
+              <v-text-field
+              ref="packageCode"
+              v-model="packageCode"
+              label="Package code"
+              dense
+              outlined>
+            </v-text-field>
             </v-col>
           </v-row>
           </v-card-text>
@@ -171,6 +187,7 @@
   </v-card>
 </template>
 <script>
+import { mapActions } from 'vuex';
 import constants from '../../constants';
 import eventBus from '../../helpers/eventBus';
 import { formatNumber } from '../../helpers/phoneNumber';
@@ -188,11 +205,13 @@ export default {
     deliveryType: '',
     zip: '',
     comments: '',
-    paymetStatus: '',
+    paymentStatus: '',
     deliveryZone: '',
     pickupArea: '',
     price: '',
     totalNumberOfItems: '',
+    pickAddress: '',
+    packageCode: '',
     isLoading: false,
   }),
   computed: {
@@ -202,7 +221,7 @@ export default {
     percelTypes() {
       return ['Documents', 'Products'];
     },
-    paymetStatuses() {
+    paymentStatuses() {
       return ['COD', 'PAID'];
     },
     deliveryTypes() {
@@ -215,12 +234,11 @@ export default {
     },
     form() {
       return {
-        // TODO: fix ref with form key
         deliveryType: this.deliveryType,
         numberOfItems: this.totalNumberOfItems,
         percelType: this.percelType,
-        paymetStatus: this.paymetStatus,
-        // pickrecipientAddress:
+        paymentStatus: this.paymentStatus,
+        pickAddress: this.pickAddress,
         pickHub: this.pickupArea,
         recipientAddress: this.recipientAddress,
         recipientArea: this.deliveryZone,
@@ -231,10 +249,12 @@ export default {
         recipientZip: this.zip,
         comments: this.comments,
         price: this.price,
+        packageCode: this.packageCode,
       };
     },
   },
   methods: {
+    ...mapActions(['ORDER_CREATE']),
     validdateForm() {
       let isValid = true;
       Object.keys(this.form).forEach((f) => {
@@ -243,9 +263,27 @@ export default {
       });
       return isValid;
     },
-    handleAction() {
-      const isValid = this.validdateForm();
-      console.log(isValid);
+    resetForm() {
+      Object.keys(this.form).forEach((f) => {
+        if (this.$refs[f]) { this.$refs[f].reset(); }
+      });
+    },
+    async handleAction() {
+      this.isLoading = true;
+      const validForm = this.validdateForm();
+      try {
+        const { isValid } = formatNumber(`+88${this.form?.recipientPhone}`);
+        if (validForm && isValid) {
+          this.form.numberOfItems = Number(this.form.numberOfItems);
+          this.form.price = Number(this.form.price);
+          await this.ORDER_CREATE(this.form);
+          this.resetForm();
+          this.$toast.success('Order created successfully');
+        }
+      } catch (err) {
+        // console.log(err);
+      }
+      this.isLoading = false;
     },
     closeAddPercel() {
       eventBus.$emit(constants.events.SHOW_ADD_PERCEL_DIALOG, false);
