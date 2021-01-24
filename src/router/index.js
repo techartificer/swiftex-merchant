@@ -20,9 +20,17 @@ const routes = [
     },
   },
   {
-    path: '/admin',
-    name: 'Admin',
-    component: () => import('../views/Admin.vue'),
+    path: '/my-shops',
+    name: 'My Shops',
+    component: () => import('../views/MyShops'),
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/percels',
+    name: 'Percels',
+    component: () => import('../views/Percels'),
     meta: {
       requiresAuth: true,
     },

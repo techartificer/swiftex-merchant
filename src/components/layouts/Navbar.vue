@@ -17,14 +17,35 @@
           @click="goToRoute(item.to)"
         >
           <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon :class="{active: item.to===routePath}">{{ item.icon }}</v-icon>
           </v-list-item-icon>
-          <v-list-item-content>
+          <v-list-item-content :class="{active: item.to===routePath}">
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
+    <v-bottom-navigation
+      fixed
+      v-show="isMobile"
+    >
+      <v-text-field
+        v-model="searchItem"
+        class="fixed-width"
+        single-line
+        outlined
+        dense
+        label="Type percel id here"
+        color="secondary"
+        :loading="isSearching"
+        ></v-text-field>
+        <v-btn
+        dark
+        class="ml_-1"
+        color="secondary"
+        depressed
+        >Track Percel</v-btn>
+    </v-bottom-navigation>
     <v-app-bar
       app
       clipped-left
@@ -36,8 +57,25 @@
           class="logo">
       </v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-text-field
+        v-if="!isMobile"
+        v-model="searchItem"
+        class="mt-6 fixed-width"
+        single-line
+        outlined
+        dense
+        label="Type percel id here"
+        color="secondary"
+        :loading="isSearching"
+        ></v-text-field>
+        <v-btn
+        v-show="!isMobile"
+        dark
+        class="ml_-1"
+        color="black"
+        elevation="0"
+        >Track Percel</v-btn>
         <v-spacer></v-spacer>
-
         <v-btn
         small
         fab
@@ -49,6 +87,8 @@
           <v-icon>mdi-bell</v-icon>
         </v-btn>
         <v-menu
+        v-if="CurrentShop"
+        open-on-hover
         bottom
         transition="slide-y-transition"
         offset-y
@@ -57,15 +97,14 @@
           <template v-slot:activator="{ on, attrs }">
             <v-btn
             class="ml-0 mr-0"
-            color="primary"
+            color="secondary"
             rounded
             text
-            fab
-            small
+            outlined
             v-bind="attrs"
             v-on="on"
             >
-              <v-icon >mdi-account</v-icon>
+              {{CurrentShop.name}} <v-icon> mdi-chevron-down</v-icon>
             </v-btn>
           </template>
 
@@ -73,28 +112,47 @@
           dense
           rounded>
             <v-list-item
-              v-for="(item, index) in accountItems"
+              v-for="(item, index) in MyShops"
               :key="index"
               link
-              @click="goToRoute(item.to)"
+              @click="setShop(item.id)"
+              color="error"
             >
-              <v-list-item-icon>
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
+                <v-list-item-title
+                :class="{'list-tile': item.id === CurrentShop.id}"
+                >{{ item.name }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item
+              link
+              @click="createNewShop"
+            >
+              <v-list-item-content>
+                <v-list-item-title>Create New</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
         </v-menu>
+        <v-btn
+        v-if="!CurrentShop"
+        class="ml-0 mr-0"
+        color="secondary"
+        rounded
+        text
+        outlined
+        :loading="isInit">
+          Create <v-icon> mdi-plus</v-icon>
+        </v-btn>
     </v-app-bar>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import constants from '../../constants';
 import permission from '../../constants/permission';
+import eventBus from '../../helpers/eventBus';
 
 export default {
   components: {
@@ -105,29 +163,27 @@ export default {
     timeoutId: null,
     drawer: true,
     bottomNav: true,
-    accountItems: [
-      { icon: 'mdi-account', title: 'Profile', to: '/profile' },
-      { icon: 'mdi-logout', title: 'Logout', to: '/logout' },
-    ],
+    isInit: true,
   }),
   created() {
     this.$vuetify.theme.dark = false;
     this.initialize();
   },
   computed: {
-    ...mapGetters(['IsLoggedIn', 'Permission']),
+    ...mapGetters(['IsLoggedIn', 'Permission', 'MyShops', 'CurrentShop']),
     items() {
       switch (this.Permission) {
-        case constants.adminRoles.SUPER_ADMIN:
-          return permission.superAdmin;
-        case constants.adminRoles.ADMIN:
-          return permission.admin;
-        case constants.adminRoles.MODERATOR:
-          return permission.moderator;
+        case constants.roles.OWNER:
+          return permission.OWNER;
+        case constants.roles.MODERATOR:
+          return permission.MODERATOR;
         default:
           break;
       }
       return permission.common;
+    },
+    routePath() {
+      return this.$route.path;
     },
     isMobile() {
       // eslint-disable-next-line default-case
@@ -147,19 +203,37 @@ export default {
     },
   },
   methods: {
-
+    ...mapActions(['MY_SHOPS_REQUEST', 'SHOP_BY_ID_REQUEST', 'ORDERS_REQUEST']),
     async initialize() {
-      return true;
+      const currentShopId = localStorage.getItem(constants.CURRENT_SHOP_ID);
+      await this.MY_SHOPS_REQUEST();
+      if (!currentShopId) {
+        await this.SHOP_BY_ID_REQUEST(this.MyShops[0]?.id);
+      } else {
+        await this.SHOP_BY_ID_REQUEST(currentShopId);
+      }
+      this.isInit = false;
+    },
+    createNewShop() {
+      if (this.$route.path === '/my-shops') {
+        eventBus.$emit(constants.events.SHOW_SHOP_CU_DIALOG, null);
+      } else {
+        this.goToRoute('/my-shops?create=true');
+      }
     },
     goToRoute(r) {
       if (this.$route.path !== r) {
         this.$router.push(r);
       }
     },
+    async setShop(id) {
+      await this.SHOP_BY_ID_REQUEST(id);
+    },
     goToHome() {
       if (this.$route.path !== '/') {
         this.$router.push('/');
       }
+      this.initialize();
     },
   },
 };
@@ -211,8 +285,28 @@ span.light {
 }
 img.logo {
   margin-left: -20px;
-    height: 50px;
-    margin-top: 10px;
-    cursor: pointer;
+  height: 50px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.list-tile {
+  color: #c83843;
+}
+.active {
+  color: #c83843 !important;
+}
+.ml_-1 {
+  height: 40px !important;
+  margin-left: -4px;
+  margin-bottom: 2px;
+  color: #fff !important;
+}
+.ml_-1:hover {
+  color: #fff !important;
+}
+.fixed-width {
+  width: 30px;
+  border-color: #c83843 !important;
+  color: #c83843 !important;
 }
 </style>

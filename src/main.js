@@ -27,7 +27,6 @@ instance.interceptors.request.use(async (config) => {
     if (authToken) {
       const isExpired = validateToken(authToken);
       if (isExpired) {
-        console.log(store);
         const { accessToken, refreshToken } = await store.dispatch('REFRESH_TOKEN_REQUEST');
         config.headers.authorization = accessToken;
         config.headers.RefreshToken = refreshToken;
@@ -36,7 +35,6 @@ instance.interceptors.request.use(async (config) => {
     }
     return config;
   } catch (err) {
-    console.error(err);
     return Promise.reject(err);
   }
 }, undefined);

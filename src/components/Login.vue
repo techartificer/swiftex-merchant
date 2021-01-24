@@ -61,8 +61,8 @@ export default {
   data() {
     return {
       prefixText: '',
-      phone: '',
-      password: '',
+      phone: '01797459062',
+      password: '@sadat642',
       isLoading: false,
     };
   },
@@ -80,7 +80,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['ADMIN_LOGIN_REQUEST', 'REFRESH_TOKEN_REQUEST', 'LOGOUT_REQUEST']),
+    ...mapActions(['MERCHANT_LOGIN_REQUEST', 'REFRESH_TOKEN_REQUEST', 'LOGOUT_REQUEST']),
     focusEvent(e) {
       if (e.type === 'blur' && !this.phone) {
         this.prefixText = '';
@@ -102,7 +102,7 @@ export default {
         const { number, isValid } = formatNumber(`+88${this.phone}`);
         const v = this.validdateLoginForm();
         if (this.phone && this.password && !v && isValid) {
-          await this.ADMIN_LOGIN_REQUEST({
+          await this.MERCHANT_LOGIN_REQUEST({
             phone: number,
             password: this.password,
           });
