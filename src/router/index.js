@@ -35,6 +35,11 @@ const routes = [
       requiresAuth: true,
     },
   },
+  {
+    path: '/register',
+    name: 'Register     ',
+    component: () => import('../views/Register'),
+  },
   // {
   //   path: '/*',
   //   name: '404',
