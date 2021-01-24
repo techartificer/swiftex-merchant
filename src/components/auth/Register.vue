@@ -48,10 +48,10 @@ export default {
         console.log(err.code);
         switch (err.code) {
           case 'auth/invalid-verification-code':
-            this.$toast.error('Invalid OTP');
+            this.$toast.error('Invalid verification code');
             break;
           case 'auth/code-expired':
-            this.$toast.error('OTP expired, try again');
+            this.$toast.error('Verification code expired');
             break;
           default:
             this.$toast.error(err.message);
@@ -61,6 +61,7 @@ export default {
     },
     async initPhoneNumberVerification() {
       this.isLoading = true;
+      // TODO: check is username already exist or not
       await this.sendOtp();
     },
     async sendOtp() {
