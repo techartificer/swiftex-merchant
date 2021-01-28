@@ -35,7 +35,7 @@
         single-line
         outlined
         dense
-        label="Type percel id here"
+        label="Type parcel id here"
         color="secondary"
         :loading="isSearching"
         ></v-text-field>
@@ -44,7 +44,7 @@
         class="ml_-1"
         color="secondary"
         depressed
-        >Track Percel</v-btn>
+        >Track Parcel</v-btn>
     </v-bottom-navigation>
     <v-app-bar
       app
@@ -64,7 +64,7 @@
         single-line
         outlined
         dense
-        label="Type percel id here"
+        label="Type parcel id here"
         color="secondary"
         :loading="isSearching"
         ></v-text-field>
@@ -74,7 +74,7 @@
         class="ml_-1"
         color="black"
         elevation="0"
-        >Track Percel</v-btn>
+        >Track Parcel</v-btn>
         <v-spacer></v-spacer>
         <v-btn
         small

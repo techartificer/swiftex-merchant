@@ -28,9 +28,9 @@ const routes = [
     },
   },
   {
-    path: '/percels',
-    name: 'Percels',
-    component: () => import('../views/Percels'),
+    path: '/parcels',
+    name: 'Parcels',
+    component: () => import('../views/Parcels'),
     meta: {
       requiresAuth: true,
     },

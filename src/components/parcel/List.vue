@@ -1,7 +1,7 @@
 <template>
   <div>
     <transition name="fade">
-      <add-percel v-if="showAddPercel"/>
+      <add-parcel v-if="showAddPercel"/>
     </transition>
     <template v-if="!showAddPercel">
     <transition name="fade">
@@ -87,7 +87,7 @@
                 <v-btn
                 @click="addPercelInit"
                 depressed
-                color="primary">Add Percel</v-btn>
+                color="primary">Add Parcel</v-btn>
             </v-col>
           </v-row>
         </v-card-text>
@@ -118,7 +118,7 @@
                 {{item.trackId.substr(2)}}
               </v-chip>
             </template>
-            <span>Track percel</span>
+            <span>Track parcel</span>
           </v-tooltip>
         </template>
         <template v-slot:item.isAccepted="{ item }">
@@ -173,13 +173,13 @@
 
 import { mapActions, mapGetters } from 'vuex';
 import moment from 'moment';
-import AddPercel from './Add.vue';
+import AddParcel from './Add.vue';
 import eventBus from '../../helpers/eventBus';
 import constants from '../../constants';
 
 export default {
   components: {
-    AddPercel,
+    AddParcel,
   },
   data: () => ({
     showAddPercel: false,

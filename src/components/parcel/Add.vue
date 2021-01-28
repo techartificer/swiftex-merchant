@@ -135,7 +135,7 @@
               outlined
               v-model="percelType"
               dense
-              label="Percel type"
+              label="Parcel type"
             ></v-autocomplete>
             <v-autocomplete
               :rules="[() => !!deliveryType || 'This field is required' ]"
