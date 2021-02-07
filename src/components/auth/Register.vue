@@ -20,6 +20,7 @@
               :rules="[() => !!phone || 'This field is required',isAvilable, validatePhoneNumber]"
               label="Phone"
               type="tel"
+              @keyup.enter="initPhoneNumberVerification"
               required
             ></v-text-field>
             <v-text-field
@@ -43,7 +44,16 @@
               :loading="isLoading"
               :small="isLoading"
               @click="initPhoneNumberVerification"
-              >Get OTP</v-btn>
+              >Request OTP</v-btn>
+              <v-btn
+              v-if="!showOTP && !isLoading"
+              color="primary"
+              block
+              outlined
+              class="mt-2"
+              @click="$router.push('/')"
+              >already have an account</v-btn>
+
               <v-btn color="primary"
               v-if="showOTP"
               :block="!isLoading"
@@ -96,7 +106,10 @@
               outlined
               v-model="password"
               label="Password"
-              :rules="[() => !!password || 'This field is required']"
+              :rules="[
+                () => !!password || 'This field is required',
+                lengthCheck
+              ]"
               type="password"
               required
             ></v-text-field>
@@ -107,8 +120,12 @@
               outlined
               v-model="conPassword"
               label="Confirm Password"
-              :rules="[() => !!conPassword || 'This field is required']"
+              :rules="[
+                () => !!conPassword || 'This field is required',
+                lengthCheck
+              ]"
               type="password"
+              :error-messages="conPassErrMsg"
               required
             ></v-text-field>
             <div class="login">
@@ -148,12 +165,15 @@ export default {
     otpErrMsg: '',
     conPassword: '',
     notAvailable: [],
+    conPassErrMsg: '',
   }),
   computed: {
     isAvilable() {
       const avilable = this.notAvailable && this.notAvailable.includes(`88${this.phone}`);
-      console.log(this.notAvailable);
       return !avilable ? true : 'Username already exist';
+    },
+    lengthCheck() {
+      return this.password.length <= 5 ? 'Length should be at least 6' : true;
     },
     validatePhoneNumber() {
       const { isValid } = formatNumber(`+88${this.phone}`);
@@ -164,7 +184,7 @@ export default {
       return {
         name: this.name,
         email: this.email,
-        phone: `88${this.phone}`,
+        phone: this.phone,
         password: this.password,
       };
     },
@@ -173,6 +193,16 @@ export default {
     initialize();
   },
   watch: {
+    password(val) {
+      if (this.password && this.conPassword && val !== this.conPassword) {
+        this.conPassErrMsg = 'Password not matched';
+      } else { this.conPassErrMsg = ''; }
+    },
+    conPassword(val) {
+      if (this.password && this.conPassword && val !== this.password) {
+        this.conPassErrMsg = 'Password not matched';
+      } else { this.conPassErrMsg = ''; }
+    },
     code(val) {
       if (val?.length === 6) {
         this.otpErrMsg = '';
@@ -180,7 +210,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['IS_USERNAME_AVAILABLE']),
+    ...mapActions(['IS_USERNAME_AVAILABLE', 'REGISTER']),
     focusEvent(e) {
       if (e.type === 'blur' && !this.phone) {
         this.prefixText = '';
@@ -188,9 +218,25 @@ export default {
         this.prefixText = '+88';
       }
     },
+    validdateForm() {
+      let formHasErrors = false;
+      Object.keys(this.form).forEach((f) => {
+        if (!this.form[f]) formHasErrors = true;
+        this.$refs[f].validate(true);
+      });
+      return formHasErrors;
+    },
     async registerHandle() {
-      console.log(this.form);
-      return null;
+      this.isLoading = true;
+      const formHasErrors = this.validdateForm();
+      if (formHasErrors) return;
+      try {
+        await this.REGISTER(this.form);
+        this.$router.push('/');
+      } catch (err) {
+        // err
+      }
+      this.isLoading = false;
     },
     async verifyOTP() {
       try {
@@ -200,10 +246,9 @@ export default {
         }
         this.isLoading = true;
         const { user } = await window.confirmationResult.confirm(this.code);
-        console.log('Verified phone number: ', user.phoneNumber);
+        this.phone = user.phoneNumber.substr(1);
         this.isOTPVerified = true;
       } catch (err) {
-        console.log(err.code);
         switch (err.code) {
           case 'auth/invalid-verification-code':
             this.$toast.error('Invalid verification code');

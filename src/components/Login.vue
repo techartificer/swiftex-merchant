@@ -46,6 +46,14 @@
             @click="handleLogin"
             >Login</v-btn>
           </div>
+          <div class="mt-2 btns">
+            <div @click="$router.push('/register')">
+              Signup now
+            </div>
+            <div text class="btns-forgot">
+              Forgot Password?
+            </div>
+          </div>
         </v-card-text>
       </v-card>
     </v-col>
@@ -123,5 +131,9 @@ img.log-img {
     margin: 30px;
     margin-top: 10px;
     height: 70px;
+}
+.btns {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

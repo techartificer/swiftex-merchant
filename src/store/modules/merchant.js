@@ -13,6 +13,15 @@ export default {
         return Promise.reject(err);
       }
     },
+    // eslint-disable-next-line no-unused-vars
+    async REGISTER({ commit }, payload) {
+      try {
+        const { data } = await instance.post('/merchant/register/', payload);
+        return data.data;
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
   },
   getters: {},
 };
