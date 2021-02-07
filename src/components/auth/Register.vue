@@ -232,6 +232,7 @@ export default {
       if (formHasErrors) return;
       try {
         await this.REGISTER(this.form);
+        this.$toast.success('Registration successful');
         this.$router.push('/');
       } catch (err) {
         // err

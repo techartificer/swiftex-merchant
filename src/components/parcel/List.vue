@@ -100,7 +100,6 @@
         class="elevation-0"
         :loading="isInit"
       >
-
         <template v-slot:item.recipientPhone="{ item }">
           {{item.recipientPhone.substr(2)}}
         </template>
@@ -200,6 +199,9 @@ export default {
     searchDisabled() {
       return !this.phone && !this.trackId && this.dates.length !== 2;
     },
+    allEmpty() {
+      return this.phone === '' && this.dates.length === 0 && this.trackId === '';
+    },
     dateRangeText() {
       if (this.dates.length === 2) {
         const [dts, dte] = this.dates;
@@ -241,6 +243,11 @@ export default {
   watch: {
     CurrentShop() {
       this.intialize();
+    },
+    allEmpty(val) {
+      if (val) {
+        this.intialize();
+      }
     },
     phone() {
       this.trackId = '';
@@ -297,7 +304,10 @@ export default {
       this.isSearched = false;
     },
     async intialize() {
-      if (!this.CurrentShop) return;
+      if (!this.CurrentShop) {
+        this.isInit = false;
+        return;
+      }
       try {
         await this.ORDERS_REQUEST({ shopId: this.CurrentShop.id });
       } catch (err) {

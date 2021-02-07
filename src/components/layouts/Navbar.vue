@@ -141,7 +141,9 @@
         rounded
         text
         outlined
-        :loading="isInit">
+        :loading="isInit"
+        @click="createNewShop"
+        >
           Create <v-icon> mdi-plus</v-icon>
         </v-btn>
     </v-app-bar>
@@ -208,6 +210,10 @@ export default {
       const currentShopId = localStorage.getItem(constants.CURRENT_SHOP_ID);
       await this.MY_SHOPS_REQUEST();
       if (!currentShopId) {
+        if (!this.MyShops?.length) {
+          this.isInit = false;
+          return;
+        }
         await this.SHOP_BY_ID_REQUEST(this.MyShops[0]?.id);
       } else {
         await this.SHOP_BY_ID_REQUEST(currentShopId);
