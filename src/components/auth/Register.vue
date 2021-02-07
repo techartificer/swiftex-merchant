@@ -17,7 +17,7 @@
               dense
               outlined
               v-model="phone"
-              :rules="[() => !!phone || 'This field is required', validatePhoneNumber]"
+              :rules="[() => !!phone || 'This field is required',isAvilable, validatePhoneNumber]"
               label="Phone"
               type="tel"
               required
@@ -32,6 +32,7 @@
               :rules="[() => !!code || 'This field is required']"
               label="OTP"
               required
+              :error-messages="otpErrMsg"
             ></v-text-field>
             <div id="recaptcha-container"></div>
             <div class="login">
@@ -127,6 +128,7 @@
 
 <script>
 
+import { mapActions } from 'vuex';
 import firebaseMod from '../../plugins/firebase';
 import { formatNumber } from '../../helpers/phoneNumber';
 
@@ -143,9 +145,16 @@ export default {
     name: '',
     email: '',
     password: '',
+    otpErrMsg: '',
     conPassword: '',
+    notAvailable: [],
   }),
   computed: {
+    isAvilable() {
+      const avilable = this.notAvailable && this.notAvailable.includes(`88${this.phone}`);
+      console.log(this.notAvailable);
+      return !avilable ? true : 'Username already exist';
+    },
     validatePhoneNumber() {
       const { isValid } = formatNumber(`+88${this.phone}`);
       if (!isValid) return 'Phone number should be valid';
@@ -163,7 +172,15 @@ export default {
   mounted() {
     initialize();
   },
+  watch: {
+    code(val) {
+      if (val?.length === 6) {
+        this.otpErrMsg = '';
+      }
+    },
+  },
   methods: {
+    ...mapActions(['IS_USERNAME_AVAILABLE']),
     focusEvent(e) {
       if (e.type === 'blur' && !this.phone) {
         this.prefixText = '';
@@ -177,6 +194,10 @@ export default {
     },
     async verifyOTP() {
       try {
+        if (this.code?.length !== 6) {
+          this.otpErrMsg = 'Code length should be 6';
+          return;
+        }
         this.isLoading = true;
         const { user } = await window.confirmationResult.confirm(this.code);
         console.log('Verified phone number: ', user.phoneNumber);
@@ -200,9 +221,15 @@ export default {
     async initPhoneNumberVerification() {
       this.isLoading = true;
       const { number, isValid } = formatNumber(`+88${this.phone}`);
-      if (isValid) {
+      if (isValid && this.isAvilable === true) {
         try {
-          // TODO: check is username already exist or not
+          const isAvilable = await this.IS_USERNAME_AVAILABLE(number);
+          if (!isAvilable) {
+            this.notAvailable.push(number);
+            this.$toast.error('Username already exist');
+            this.isLoading = false;
+            return;
+          }
           await this.sendOtp(`+${number}`);
         } catch (err) {
           this.$toast.error('Something wen wrong, try again');
