@@ -114,7 +114,7 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                {{item.trackId.substr(2)}}
+                {{item.trackId}}
               </v-chip>
             </template>
             <span>Track parcel</span>
