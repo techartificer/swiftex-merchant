@@ -51,7 +51,7 @@
               Signup now
             </div>
             <div text class="btns-forgot">
-              Forgot Password?
+              *Forgot Password?
             </div>
           </div>
         </v-card-text>
@@ -135,5 +135,8 @@ img.log-img {
 .btns {
   display: flex;
   justify-content: space-between;
+}
+.btns-forget {
+  color: #c83843;
 }
 </style>
