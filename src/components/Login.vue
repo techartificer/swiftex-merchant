@@ -46,13 +46,23 @@
             @click="handleLogin"
             >Login</v-btn>
           </div>
-          <div class="mt-2 btns">
-            <div @click="$router.push('/register')">
-              Signup now
-            </div>
-            <div text class="btns-forgot">
+          <div text class="mt-2 btns-forgot">
               *Forgot Password?
-            </div>
+          </div>
+          <div class="mt-4 signup-header">
+            Don't Have An Account?
+          </div>
+          <div class="mt-2">
+            <v-btn
+              v-if="!showOTP && !isLoading"
+              color="primary"
+              block
+              outlined
+              class="mt-2"
+              @click="$router.push('/register')"
+            >
+              SignUp Now
+            </v-btn>
           </div>
         </v-card-text>
       </v-card>
@@ -132,11 +142,16 @@ img.log-img {
     margin-top: 10px;
     height: 70px;
 }
-.btns {
-  display: flex;
-  justify-content: space-between;
-}
-.btns-forget {
+.btns-forgot {
   color: #c83843;
+  display: flex;
+  justify-content: flex-end;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.signup-header {
+  color: #c83843;
+  display: flex;
+  justify-content: center;
 }
 </style>
