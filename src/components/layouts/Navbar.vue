@@ -209,16 +209,20 @@ export default {
     async initialize() {
       const currentShopId = localStorage.getItem(constants.CURRENT_SHOP_ID);
       await this.MY_SHOPS_REQUEST();
-      if (!currentShopId) {
-        if (!this.MyShops?.length) {
-          this.isInit = false;
-          return;
+      try {
+        if (!currentShopId) {
+          if (!this.MyShops?.length) {
+            this.isInit = false;
+            return;
+          }
+          await this.SHOP_BY_ID_REQUEST(this.MyShops[0]?.id);
+        } else {
+          await this.SHOP_BY_ID_REQUEST(currentShopId);
         }
-        await this.SHOP_BY_ID_REQUEST(this.MyShops[0]?.id);
-      } else {
-        await this.SHOP_BY_ID_REQUEST(currentShopId);
+        this.isInit = false;
+      } catch (err) {
+        this.isInit = false;
       }
-      this.isInit = false;
     },
     createNewShop() {
       if (this.$route.path === '/my-shops') {

@@ -107,7 +107,7 @@
                 depressed
                 rounded
                 color="secondary"
-                @click="handleAction"
+                @click="handleAction()"
                 :loading="isLoading"
                 >
                 {{isCreateForm ? 'Create' : 'Update'}}
@@ -168,7 +168,6 @@ export default {
     eventBus.$on(constants.events.SHOW_SHOP_CU_DIALOG, (data) => {
       this.show = true;
       if (data) {
-        console.log(data);
         const {
           name, address, pickupArea, phone, fbPage, pickupAddress, email, deliveryZone, id,
         } = data;
@@ -227,7 +226,7 @@ export default {
           }
         }
       } catch (err) {
-        // console.log(err);
+        console.log(err);
       }
       this.isLoading = false;
     },

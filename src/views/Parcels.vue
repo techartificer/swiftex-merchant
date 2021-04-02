@@ -1,7 +1,7 @@
 <template>
   <div class="root">
     <div class="head">
-      Orders
+      Parcels
     </div>
     <div class="order">
       <div class="order-add">

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import constants from '../../constants';
 import instance from '../../helpers/axios';
 
@@ -15,6 +16,7 @@ export default {
       state.myShops = data;
     },
     ADD_SHOP(state, data) {
+      state.myShops = state.myShops || [];
       const shops = state.myShops?.splice(0);
       state.myShops = [...shops, data];
     },
@@ -32,7 +34,7 @@ export default {
     async CREATE_SHOP_REQUEST({ commit }, payload) {
       try {
         const { data } = await instance.post('/shop/create', payload);
-        commit('ADD_SHOP', data?.data);
+        commit('ADD_SHOP', data?.data?.shop);
         return data?.data;
       } catch (err) {
         return Promise.reject(err);

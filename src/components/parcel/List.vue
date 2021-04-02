@@ -132,13 +132,13 @@
         <template v-slot:item.requestedDeliveryTime="{ item }">
           {{getTime(item.requestedDeliveryTime)}}
         </template>
-        <template v-slot:item.deliverdAt="{ item }">
+        <template v-slot:item.deliveredAt="{ item }">
           <v-chip
-            :color="getDeliveredAt(item.deliverdAt).color"
+            :color="getDeliveredAt(item.deliveredAt).color"
             dark
             small
           >
-          {{getDeliveredAt(item.deliverdAt).time}}
+          {{getDeliveredAt(item.deliveredAt).time}}
           </v-chip>
         </template>
         <template v-slot:item.actions="{ item }">
@@ -169,6 +169,7 @@
 </template>
 <script>
 /* eslint-disable vue/no-side-effects-in-computed-properties */
+/* eslint-disable vue/valid-v-slot */
 
 import { mapActions, mapGetters } from 'vuex';
 import moment from 'moment';
@@ -226,10 +227,10 @@ export default {
         { text: 'Area', value: 'recipientArea' },
         { text: 'City', value: 'recipientCity' },
         { text: 'Price', value: 'price' },
-        { text: 'Type', value: 'parcelType' },
+        { text: 'Current Status', value: 'currentStatus' },
         { text: 'Delivery Type', value: 'deliveryType' },
         { text: '# of Items', value: 'numberOfItems' },
-        { text: 'Delivered', value: 'deliverdAt' },
+        { text: 'Delivered', value: 'deliveredAt' },
         { text: 'Actions', value: 'actions' },
       ];
     },
@@ -324,8 +325,7 @@ export default {
       return 'N/A';
     },
     getDeliveredAt(t) {
-      // const constDate = '0001-01-01T00:00:00Z';
-      if (t && new Date(t) > new Date('2020-12-31 00:00:00')) {
+      if (t) {
         return {
           time: moment(t).format('DD MMM YYYY'),
           color: 'success',
