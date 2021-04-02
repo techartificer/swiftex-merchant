@@ -22,6 +22,16 @@ export default {
     },
   },
   actions: {
+    async DASHBOARD_BY_SHOP_ID({ state }, payload) {
+      try {
+        const id = state.shop?.id || payload;
+        if (!id) return {};
+        const { data } = await instance.get(`/shop/dashboard/${id}`);
+        return data?.data;
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
     async SHOP_BY_ID_REQUEST({ commit }, id) {
       try {
         const { data } = await instance.get(`/shop/id/${id}`);
