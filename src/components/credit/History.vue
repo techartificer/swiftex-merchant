@@ -8,7 +8,6 @@
           class="pa-2"
           outlined
           tile
-          min-height="500"
         >
         <v-card-title>
           <div>Transaction History</div>
@@ -24,8 +23,24 @@
         :headers="headers"
         :items="Histories"
         :items-per-page="15"
-        height="800"
-      ></v-data-table>
+      >
+      <template v-slot:item.paymentType="{ item }">
+        <v-chip :color="getColor(item)" dark class="pl-6 pr-6" small>
+          <div class="paymentType" >Cash {{item.paymentType}}</div>
+        </v-chip>
+      </template>
+      <template v-slot:item.createdAt="{ item }">
+        {{getTime(item)}}
+      </template>
+      <template v-slot:item.orderId="{ item }">
+        <v-btn @click="showOrder(item)"
+        depressed
+        color="primary"
+        roundeditem
+        small
+        >View Order</v-btn>
+      </template>
+      </v-data-table>
         </v-card>
       </v-col>
     </v-row>
@@ -34,7 +49,9 @@
 </template>
 
 <script>
+import moment from 'moment';
 import { mapActions, mapGetters } from 'vuex';
+import constants from '../../constants';
 
 export default {
   data: () => ({
@@ -53,7 +70,7 @@ export default {
         { text: 'Payment', value: 'payment' },
         { text: 'Payment Type', value: 'paymentType' },
         { text: 'Transaction Time', value: 'createdAt' },
-        { text: 'Show Order', value: 'orderId' },
+        { text: 'Order', value: 'orderId' },
       ];
     },
     balance() {
@@ -66,10 +83,19 @@ export default {
     },
   },
   mounted() {
-    this.fetchTrxHistories(this.CurrentShop.id);
+    this.fetchTrxHistories(this.CurrentShop?.id);
   },
   methods: {
     ...mapActions(['HISTORIES_BY_SHOP_ID']),
+    showOrder(order) {
+      console.log(order);
+    },
+    getTime({ createdAt }) {
+      return moment(createdAt).format('DD-MM-YYYY HH:MM:SS A');
+    },
+    getColor({ paymentType }) {
+      return paymentType === constants.paymentType.IN ? 'green' : 'red';
+    },
     loadMore() {
       this.page += 1;
     },
@@ -83,3 +109,9 @@ export default {
   },
 };
 </script>
+<style scoped>
+.paymentType {
+  font-size: larger;
+  font-weight: 500;
+}
+</style>

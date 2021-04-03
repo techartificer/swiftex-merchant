@@ -26,4 +26,8 @@ module.exports = {
     'Mirpur',
     'Bashundhara R/A',
   ],
+  paymentType: {
+    IN: 'In',
+    OUT: 'Out',
+  },
 };

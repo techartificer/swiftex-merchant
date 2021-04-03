@@ -18,6 +18,7 @@ export default {
     async HISTORIES_BY_SHOP_ID({ commit }, payload = {}) {
       try {
         const { shopId, lastId } = payload;
+        if (!shopId) return {};
         const { data } = await instance.get(`/transaction/shopId/${shopId}?lastId=${lastId || ''}`);
         commit('setHistories', { ...data.data, makeEmpty: !lastId });
         return data.data;
