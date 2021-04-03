@@ -37,7 +37,7 @@
             </v-list-item>
             <v-card-actions>
               <v-list-item-title class="headline mb-1 text-right">
-                  {{dashboard.total}}
+                  {{dashboard.total || 0}}
               </v-list-item-title>
             </v-card-actions>
           </v-card>
@@ -59,7 +59,7 @@
             </v-list-item>
             <v-card-actions>
               <v-list-item-title class="headline mb-1 text-right">
-                  {{dashboard.delivered}}
+                  {{dashboard.delivered || 0}}
               </v-list-item-title>
             </v-card-actions>
           </v-card>
@@ -81,7 +81,7 @@
             </v-list-item>
             <v-card-actions>
               <v-list-item-title class="headline mb-1 text-right">
-                  {{dashboard.inTransit}}
+                  {{dashboard.inTransit || 0}}
               </v-list-item-title>
             </v-card-actions>
           </v-card>
@@ -103,7 +103,7 @@
             </v-list-item>
             <v-card-actions>
               <v-list-item-title class="headline mb-1 text-right">
-                  {{dashboard.returned}}
+                  {{dashboard.returned || 0}}
               </v-list-item-title>
             </v-card-actions>
           </v-card>

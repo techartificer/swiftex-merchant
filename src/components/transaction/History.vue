@@ -23,7 +23,8 @@
         :page="page"
         :headers="headers"
         :items="Histories"
-        :items-per-page="15"
+        :items-per-page="1000000"
+        hide-default-footer
       >
       <template v-slot:item.paymentType="{ item }">
         <v-chip :color="getColor(item)" dark class="pl-6 pr-6" small>
@@ -48,6 +49,7 @@
         color="secondary"
         rounded
         @click="loadMore"
+        :loading="isFetching"
         small>Load More</v-btn>
     </div>
         </v-card>
@@ -66,7 +68,7 @@ export default {
   data: () => ({
     page: 1,
     isFetching: false,
-    hasMore: true,
+    hasMore: false,
   }),
   computed: {
     ...mapGetters(['CurrentShop', 'Histories', 'Trx']),
@@ -116,6 +118,7 @@ export default {
         this.isFetching = true;
         const { transactionHistory } = await this.HISTORIES_BY_SHOP_ID({ shopId, lastId });
         if (transactionHistory.length < 15) this.hasMore = false;
+        else this.hasMore = true;
         this.page += 1;
       } catch (err) {
         // err

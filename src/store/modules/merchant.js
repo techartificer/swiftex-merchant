@@ -14,9 +14,11 @@ export default {
       }
     },
     // eslint-disable-next-line no-unused-vars
-    async REGISTER({ commit }, payload) {
+    async REGISTER({ commit }, { body, token }) {
       try {
-        const { data } = await instance.post('/merchant/register/', payload);
+        const { data } = await instance.post('/merchant/register/', body, {
+          headers: { FirebaseToken: token },
+        });
         return data.data;
       } catch (err) {
         return Promise.reject(err);

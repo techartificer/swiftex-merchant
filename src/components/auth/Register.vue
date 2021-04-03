@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <v-card width="450" class="mx-auto head pa-10" outlined>
       <v-card-text>
           <div class="login">
@@ -152,7 +151,7 @@ import { formatNumber } from '../../helpers/phoneNumber';
 const { firebase, initialize } = firebaseMod;
 export default {
   data: () => ({
-    phone: '01710027639',
+    phone: '',
     showOTP: false,
     verificationId: '',
     code: '',
@@ -166,6 +165,7 @@ export default {
     conPassword: '',
     notAvailable: [],
     conPassErrMsg: '',
+    token: '',
   }),
   computed: {
     isAvilable() {
@@ -231,7 +231,7 @@ export default {
       const formHasErrors = this.validdateForm();
       if (formHasErrors) return;
       try {
-        await this.REGISTER(this.form);
+        await this.REGISTER({ body: this.form, token: this.token });
         this.$toast.success('Registration successful');
         this.$router.push('/');
       } catch (err) {
@@ -246,7 +246,9 @@ export default {
           return;
         }
         this.isLoading = true;
-        const { user } = await window.confirmationResult.confirm(this.code);
+        const data = await window.confirmationResult.confirm(this.code);
+        this.token = await data.user.getIdToken();
+        const { user } = data;
         this.phone = user.phoneNumber.substr(1);
         this.isOTPVerified = true;
       } catch (err) {

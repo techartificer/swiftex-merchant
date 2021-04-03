@@ -1,12 +1,13 @@
 <template>
-<v-row justify="center">
+<div class="root">
+  <v-row :justify="isMobile?'center': 'end'" class="cmt-12">
     <v-col
       cols="8"
       sm="10"
       md="4"
       lg="4"
     >
-      <v-card ref="form" class="pa-10 mt-16" outlined>
+      <v-card ref="form" class="mt-16" :class="{'pa-10': !isMobile}" outlined max-width="500">
         <v-card-text>
           <div class="login">
             <img src="../assets/logo.png" alt="logo" class="log-img">
@@ -46,28 +47,28 @@
             @click="handleLogin"
             >Login</v-btn>
           </div>
-          <div text class="mt-2 btns-forgot">
-              *Forgot Password?
-          </div>
-          <div class="mt-4 signup-header">
+          <!-- <div class="mt-4 signup-header">
             Don't Have An Account?
-          </div>
+          </div> -->
           <div class="mt-2">
             <v-btn
               v-if="!showOTP && !isLoading"
-              color="primary"
+              color="secondary"
               block
-              outlined
               class="mt-2"
               @click="$router.push('/register')"
             >
-              SignUp Now
+              Join as a merchant
             </v-btn>
+          <div text class="mt-2 btns-forgot">
+              Forgot Password?
+          </div>
           </div>
         </v-card-text>
       </v-card>
     </v-col>
   </v-row>
+</div>
 </template>
 
 <script>
@@ -82,9 +83,17 @@ export default {
       phone: '01797459062',
       password: '@sadat642',
       isLoading: false,
+      showOTP: false,
     };
   },
   computed: {
+    isMobile() {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return true;
+        case 'sm': return true;
+        default: return false;
+      }
+    },
     loginForm() {
       return {
         password: this.password,
@@ -143,15 +152,26 @@ img.log-img {
     height: 70px;
 }
 .btns-forgot {
+  padding-top: 10px;
   color: #c83843;
   display: flex;
   justify-content: flex-end;
+  font-weight: 600;
   cursor: pointer;
-  text-decoration: underline;
+  // text-decoration: underline;
 }
 .signup-header {
   color: #c83843;
   display: flex;
   justify-content: center;
+}
+.cmt-12 {
+  margin-top: 12vh;
+}
+.root {
+  background-image: url("../assets/swiftex_back.webp");
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
 }
 </style>

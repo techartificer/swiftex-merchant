@@ -99,6 +99,8 @@
         :items="Orders"
         class="elevation-0"
         :loading="isInit"
+        :items-per-page="1000000"
+        hide-default-footer
       >
         <template v-slot:item.recipientPhone="{ item }">
           {{item.recipientPhone.substr(2)}}

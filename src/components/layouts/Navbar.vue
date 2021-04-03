@@ -188,12 +188,11 @@ export default {
       return this.$route.path;
     },
     isMobile() {
-      // eslint-disable-next-line default-case
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return true;
         case 'sm': return true;
+        default: return false;
       }
-      return false;
     },
     user() {
       if (!this.profile || !this.profile.name) return '';
