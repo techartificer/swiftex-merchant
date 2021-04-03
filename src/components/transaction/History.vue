@@ -19,6 +19,7 @@
           </div>
         </v-card-title>
         <v-data-table
+        :loading="isFetching"
         :page="page"
         :headers="headers"
         :items="Histories"
@@ -41,6 +42,14 @@
         >View Order</v-btn>
       </template>
       </v-data-table>
+      <div class="text-center pt-2">
+        <v-btn
+        :disabled="!hasMore"
+        color="secondary"
+        rounded
+        @click="loadMore"
+        small>Load More</v-btn>
+    </div>
         </v-card>
       </v-col>
     </v-row>
@@ -56,6 +65,8 @@ import constants from '../../constants';
 export default {
   data: () => ({
     page: 1,
+    isFetching: false,
+    hasMore: true,
   }),
   computed: {
     ...mapGetters(['CurrentShop', 'Histories', 'Trx']),
@@ -96,15 +107,20 @@ export default {
     getColor({ paymentType }) {
       return paymentType === constants.paymentType.IN ? 'green' : 'red';
     },
-    loadMore() {
-      this.page += 1;
+    async loadMore() {
+      const lastId = this.Histories[this.Histories?.length - 1]?.id;
+      await this.fetchTrxHistories(this.CurrentShop?.id, lastId);
     },
     async fetchTrxHistories(shopId, lastId = '') {
       try {
-        await this.HISTORIES_BY_SHOP_ID({ shopId, lastId });
+        this.isFetching = true;
+        const { transactionHistory } = await this.HISTORIES_BY_SHOP_ID({ shopId, lastId });
+        if (transactionHistory.length < 15) this.hasMore = false;
+        this.page += 1;
       } catch (err) {
         // err
       }
+      this.isFetching = false;
     },
   },
 };

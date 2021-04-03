@@ -38,7 +38,7 @@ const routes = [
   {
     path: '/transactions',
     name: 'Credit History',
-    component: () => import('../views/CreditHistory.vue'),
+    component: () => import('../views/Transactions.vue'),
     meta: {
       requiresAuth: true,
     },

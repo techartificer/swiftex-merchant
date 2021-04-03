@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import CreditHistory from '../components/credit/History.vue';
+import CreditHistory from '../components/transaction/History.vue';
 
 export default {
   components: {
