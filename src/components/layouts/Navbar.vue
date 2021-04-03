@@ -234,7 +234,6 @@ export default {
     async trackParcel() {
       try {
         this.isSearching = true;
-        console.log(this.searchItem);
         await this.TRACK_ORDER(this.searchItem);
       } catch (err) {
         // err

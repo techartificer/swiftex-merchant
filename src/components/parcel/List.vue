@@ -110,11 +110,11 @@
             <template v-slot:activator="{ on, attrs }">
               <v-chip
                 small
-                @click="getColor"
                 color="black"
                 dark
                 v-bind="attrs"
                 v-on="on"
+                @click="trackParcel(item.trackId)"
               >
                 {{item.trackId}}
               </v-chip>
@@ -196,6 +196,7 @@ export default {
     itemsPerPage: 10,
     searchInit: false,
     isSearched: false,
+    isSearching: false,
   }),
   computed: {
     ...mapGetters(['Orders', 'CurrentShop']),
@@ -270,9 +271,19 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['ORDERS_REQUEST']),
+    ...mapActions(['ORDERS_REQUEST', 'TRACK_ORDER']),
     addPercelInit() {
       this.showAddPercel = true;
+    },
+    async trackParcel(id) {
+      try {
+        if (this.isSearching) return;
+        this.isSearching = true;
+        await this.TRACK_ORDER(id);
+      } catch (err) {
+        // err
+      }
+      this.isSearching = false;
     },
     viewPercel(item) {
       console.log(item);

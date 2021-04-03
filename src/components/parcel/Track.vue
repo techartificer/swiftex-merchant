@@ -12,7 +12,7 @@
     >
       <v-card-title class="pa-3 lighten-3">
         <div class="title text-center grow">
-          Track ID {{ShowTrackDialog}}
+          Track ID ~ {{ShowTrackDialog}}
         </div>
       </v-card-title>
     </v-card>
