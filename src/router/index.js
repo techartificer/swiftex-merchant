@@ -36,7 +36,7 @@ const routes = [
     },
   },
   {
-    path: '/credits',
+    path: '/transactions',
     name: 'Credit History',
     component: () => import('../views/CreditHistory.vue'),
     meta: {
