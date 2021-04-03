@@ -4,7 +4,7 @@ export default {
   state: {
     orders: [],
     trcakedOrder: null,
-    showTrackDialog: false,
+    showTrackDialog: '',
   },
   mutations: {
     setOrders(state, data) {
@@ -27,7 +27,7 @@ export default {
         if (!trackId) return {};
         const { data } = await instance.get(`order/track/${trackId}`);
         commit('setTrackData', data.data);
-        state.showTrackDialog = true;
+        state.showTrackDialog = trackId;
         return data.data;
       } catch (err) {
         return Promise.reject(err);

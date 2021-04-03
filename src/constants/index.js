@@ -30,4 +30,14 @@ module.exports = {
     IN: 'In',
     OUT: 'Out',
   },
+  orderStatus: {
+    CREATED: 'Created',
+    ACCEPTED: 'Accepted',
+    DECLINED: 'Declined',
+    PENDING: 'Pending',
+    IN_TRANSIT: 'In Transit',
+    RETURNED: 'Returned',
+    RESCHEDULED: 'Rescheduled',
+    DELIVERED: 'Delivered',
+  },
 };
