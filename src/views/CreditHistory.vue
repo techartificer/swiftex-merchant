@@ -1,0 +1,16 @@
+<template>
+  <div>
+    <credit-history />
+  </div>
+</template>
+
+<script>
+import CreditHistory from '../components/credit/History.vue';
+
+export default {
+  name: 'Credit History',
+  components: {
+    CreditHistory,
+  },
+};
+</script>

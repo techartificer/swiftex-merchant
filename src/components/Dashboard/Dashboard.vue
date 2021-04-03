@@ -12,7 +12,6 @@
           color="primary"
           indeterminate
         ></v-progress-circular>
-
         </v-card-text>
       </v-card>
     </div>
@@ -221,7 +220,7 @@ export default {
   },
   watch: {
     CurrentShop(val) {
-      this.dashboardData(val);
+      this.dashboardData(val?.id);
     },
   },
   mounted() {
