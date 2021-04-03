@@ -156,10 +156,12 @@
               auto-grow
               label="Recipient Address"> </v-textarea>
               <v-text-field
-              ref="packageCode"
-              v-model="packageCode"
-              label="Package code"
+              :rules="[() => !!weight || 'This field is required']"
+              ref="weight"
+              v-model="weight"
+              label="Weight (kg)"
               dense
+              type="number"
               outlined>
             </v-text-field>
             </v-col>
@@ -211,7 +213,7 @@ export default {
     price: '',
     totalNumberOfItems: '',
     pickAddress: '',
-    packageCode: '',
+    weight: '',
     isLoading: false,
   }),
   computed: {
@@ -249,7 +251,7 @@ export default {
         recipientZip: this.zip,
         comments: this.comments,
         price: this.price,
-        packageCode: this.packageCode,
+        weight: this.weight,
       };
     },
   },
@@ -277,6 +279,7 @@ export default {
           this.form.numberOfItems = Number(this.form.numberOfItems);
           this.form.price = Number(this.form.price);
           this.form.recipientPhone = number;
+          this.form.weight = Number(this.form.weight);
           await this.ORDER_CREATE(this.form);
           this.resetForm();
           this.$toast.success('Order created successfully');
