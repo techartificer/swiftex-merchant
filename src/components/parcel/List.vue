@@ -144,19 +144,27 @@
           </v-chip>
         </template>
         <template v-slot:item.actions="{ item }">
-          <v-icon
-            small
-            class="mr-2"
-            @click="editItem(item)"
-          >
-            mdi-pencil
-          </v-icon>
-          <v-icon
-            small
-            @click="viewPercel(item)"
-          >
-            mdi-eye
-          </v-icon>
+          <v-btn
+          x-small
+          text
+          fab
+          @click="editItem(item)">
+            <v-icon > mdi-pencil </v-icon>
+          </v-btn>
+          <v-btn
+          x-small
+          text
+          fab
+           @click="viewPercel(item)">
+            <v-icon > mdi-eye </v-icon>
+          </v-btn>
+          <v-btn
+          x-small
+          text
+          fab
+          @click="copyToClipboard(item)">
+            <v-icon>mdi-content-copy</v-icon>
+          </v-btn>
         </template>
       </v-data-table>
       <div class="text-center pt-2">
@@ -172,7 +180,7 @@
 <script>
 /* eslint-disable vue/no-side-effects-in-computed-properties */
 /* eslint-disable vue/valid-v-slot */
-
+import copy from 'copy-to-clipboard';
 import { mapActions, mapGetters } from 'vuex';
 import moment from 'moment';
 import AddParcel from './Add.vue';
@@ -272,6 +280,10 @@ export default {
   },
   methods: {
     ...mapActions(['ORDERS_REQUEST', 'TRACK_ORDER']),
+    copyToClipboard(order) {
+      copy(`Hello ${order.recipientName},\n\nYour order track ID is: ${order.trackId}\nClick the URL to track https://swiftex.app?track=${order.trackId}\n\nThanks,\n${this.CurrentShop.name}`);
+      this.$toast('Copied to clipboard');
+    },
     addPercelInit() {
       this.showAddPercel = true;
     },

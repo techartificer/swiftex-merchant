@@ -168,7 +168,7 @@ export default {
   },
   data: () => ({
     isSearching: false,
-    searchItem: 'HKdg7D3n',
+    searchItem: '',
     timeoutId: null,
     drawer: true,
     bottomNav: true,
