@@ -190,7 +190,7 @@ export default {
     });
   },
   methods: {
-    ...mapActions(['CREATE_SHOP_REQUEST']),
+    ...mapActions(['CREATE_SHOP_REQUEST', 'UPDATE_SHOP_BY_SHOP_ID']),
     crateNewShop() {
       this.show = true;
       if (!this.isCreateForm) {
@@ -223,6 +223,11 @@ export default {
             this.resetForm();
             this.show = false;
             this.$toast.success('Shop created successfully');
+          } else {
+            await this.UPDATE_SHOP_BY_SHOP_ID({ update: this.form, shopId: this.shopMongoId });
+            this.resetForm();
+            this.show = false;
+            this.$toast.success('Shop update successfully');
           }
         }
       } catch (err) {
