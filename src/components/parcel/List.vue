@@ -10,7 +10,7 @@
       outlined>
         <v-card-text>
           <v-row dense>
-            <v-col>
+            <v-col lg="3" md="6" sm="12" cols="12">
               <v-text-field
               v-model="phone"
               single-line
@@ -18,7 +18,7 @@
               dense
               label="Phone"> </v-text-field>
             </v-col>
-            <v-col>
+            <v-col lg="3" md="6" sm="12" cols="12">
               <v-text-field
               v-model="trackId"
               single-line
@@ -26,7 +26,7 @@
               dense
               label="Track ID"> </v-text-field>
             </v-col>
-            <v-col>
+            <v-col lg="3" md="6" sm="12" cols="12">
               <v-dialog
                 light
                 ref="dialog"
@@ -70,7 +70,7 @@
                 </v-date-picker>
               </v-dialog>
             </v-col>
-            <v-col cols="lg-4">
+            <v-col lg="3" md="6" sm="12" cols="12">
                 <v-btn
                 :disabled="searchDisabled"
                 depressed
@@ -87,7 +87,7 @@
                 <v-btn
                 @click="addPercelInit"
                 depressed
-                color="primary">Add Parcel</v-btn>
+                color="primary">Add {{isMobile ? '' : 'Parcel'}}</v-btn>
             </v-col>
           </v-row>
         </v-card-text>
@@ -199,6 +199,13 @@ export default {
   }),
   computed: {
     ...mapGetters(['Orders', 'CurrentShop']),
+    isMobile() {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return true;
+        case 'sm': return true;
+        default: return false;
+      }
+    },
     searchDisabled() {
       return !this.phone && !this.trackId && this.dates.length !== 2;
     },

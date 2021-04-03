@@ -14,7 +14,7 @@
   </div>
 </template>
 <script>
-import List from '@/components/parcel/List.vue';
+import List from '../components/parcel/List.vue';
 
 export default {
   components: {

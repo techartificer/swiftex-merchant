@@ -7,7 +7,6 @@ export default {
   },
   mutations: {
     setHistories(state, { transaction, transactionHistory, makeEmpty = false }) {
-      console.log(makeEmpty);
       state.trx = transaction;
       if (makeEmpty) state.histories = [];
       state.histories = state.histories || [];
@@ -19,7 +18,6 @@ export default {
     async HISTORIES_BY_SHOP_ID({ commit }, payload = {}) {
       try {
         const { shopId, lastId } = payload;
-        console.log(lastId);
         if (!shopId) return {};
         const { data } = await instance.get(`/transaction/shopId/${shopId}?lastId=${lastId || ''}`);
         commit('setHistories', { ...data.data, makeEmpty: !lastId });
