@@ -3,21 +3,41 @@ import instance from '../../helpers/axios';
 export default {
   state: {
     orders: [],
+    trcakedOrder: null,
+    showTrackDialog: false,
   },
   mutations: {
-    SET_ORDERS(state, data) {
+    setOrders(state, data) {
       state.orders = data || [];
     },
-    ADD_ORDER(state, data) {
+    addOrders(state, data) {
       state.orders = [data, ...state.orders];
+    },
+    closeTrackDialog(state) {
+      state.showTrackDialog = false;
+      state.trcakedOrder = null;
+    },
+    setTrackData(state, data) {
+      state.trcakedOrder = data;
     },
   },
   actions: {
+    async TRACK_ORDER({ commit, state }, trackId = '') {
+      try {
+        if (!trackId) return {};
+        const { data } = await instance.get(`order/track/${trackId}`);
+        commit('setTrackData', data.data);
+        state.showTrackDialog = true;
+        return data.data;
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
     async ORDER_CREATE({ commit, rootState }, payload) {
       try {
         const shopId = rootState?.shop?.shop?.id;
         const { data } = await instance.post(`/order/create/${shopId}`, payload);
-        commit('ADD_ORDER', data?.data);
+        commit('addOrders', data?.data);
         return data?.data;
       } catch (err) {
         return Promise.reject(err);
@@ -32,7 +52,7 @@ export default {
         const query = `limit=${limit}&lastId=${lastId || ''}&phone=${phone || ''}&trackId=${trackId || ''}`;
         const dateQuery = `&startDate=${startDate || ''}&endDate=${endDate || ''}`;
         const { data } = await instance.get(`/order/all/${shopId}?${query}${dateQuery}`);
-        commit('SET_ORDERS', data?.data);
+        commit('setOrders', data?.data);
         return data?.data;
       } catch (err) {
         return Promise.reject(err);
@@ -41,5 +61,7 @@ export default {
   },
   getters: {
     Orders: (state) => state.orders,
+    ShowTrackDialog: (state) => state.showTrackDialog,
+    TrcakedOrder: (state) => state.trcakedOrder,
   },
 };

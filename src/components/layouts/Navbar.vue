@@ -1,5 +1,6 @@
 <template>
   <div id="inspire">
+    <track-dialog />
     <v-navigation-drawer
     v-if="true"
       v-model="drawer"
@@ -44,6 +45,8 @@
         class="ml_-1"
         color="secondary"
         depressed
+        @click="trackParcel"
+        :loading="isSearching"
         >Track Parcel</v-btn>
     </v-bottom-navigation>
     <v-app-bar
@@ -74,6 +77,8 @@
         class="ml_-1"
         color="black"
         elevation="0"
+        @click="trackParcel"
+        :loading="isSearching"
         >Track Parcel</v-btn>
         <v-spacer></v-spacer>
         <v-btn
@@ -155,13 +160,15 @@ import { mapGetters, mapActions } from 'vuex';
 import constants from '../../constants';
 import permission from '../../constants/permission';
 import eventBus from '../../helpers/eventBus';
+import TrackDialog from '../parcel/Track.vue';
 
 export default {
   components: {
+    TrackDialog,
   },
   data: () => ({
     isSearching: false,
-    searchItem: '',
+    searchItem: 'HKdg7D3n',
     timeoutId: null,
     drawer: true,
     bottomNav: true,
@@ -204,7 +211,8 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['MY_SHOPS_REQUEST', 'SHOP_BY_ID_REQUEST', 'ORDERS_REQUEST']),
+    ...mapActions(['MY_SHOPS_REQUEST', 'SHOP_BY_ID_REQUEST',
+      'TRACK_ORDER', 'ORDERS_REQUEST']),
     async initialize() {
       const currentShopId = localStorage.getItem(constants.CURRENT_SHOP_ID);
       await this.MY_SHOPS_REQUEST();
@@ -222,6 +230,16 @@ export default {
       } catch (err) {
         this.isInit = false;
       }
+    },
+    async trackParcel() {
+      try {
+        this.isSearching = true;
+        console.log(this.searchItem);
+        await this.TRACK_ORDER(this.searchItem);
+      } catch (err) {
+        // err
+      }
+      this.isSearching = false;
     },
     createNewShop() {
       if (this.$route.path === '/my-shops') {
