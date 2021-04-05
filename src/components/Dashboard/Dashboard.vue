@@ -16,141 +16,10 @@
       </v-card>
     </div>
     <div v-else>
-      <v-flex>
-
-      </v-flex>
       <v-layout row wrap class="pa-12">
-        <v-flex sm6 xs12 md6 lg4>
-          <v-card class="ma-3" outlined color="#f5f5f5">
-            <v-list-item>
-              <v-list-item-avatar tile class="mt-n7">
-                <v-sheet color="teal" width="80" height="80" elevation="10">
-                  <v-icon dark large>mdi-clipboard-list-outline</v-icon>
-                </v-sheet>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <div class="overline text-right">
-                  Orders Placed
-                </div>
-                <div><v-divider></v-divider></div>
-              </v-list-item-content>
-            </v-list-item>
-            <v-card-actions>
-              <v-list-item-title class="headline mb-1 text-right">
-                  {{dashboard.total || 0}}
-              </v-list-item-title>
-            </v-card-actions>
-          </v-card>
-        </v-flex>
-        <v-flex sm6 xs12 md6 lg4>
-          <v-card class="ma-3" outlined color="#f5f5f5">
-            <v-list-item>
-              <v-list-item-avatar tile class="mt-n7">
-                <v-sheet color="green" width="80" height="80" elevation="10">
-                  <v-icon dark large>mdi-playlist-check</v-icon>
-                </v-sheet>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <div class="overline text-right">
-                  Orders Delivered
-                </div>
-                <div><v-divider></v-divider></div>
-              </v-list-item-content>
-            </v-list-item>
-            <v-card-actions>
-              <v-list-item-title class="headline mb-1 text-right">
-                  {{dashboard.delivered || 0}}
-              </v-list-item-title>
-            </v-card-actions>
-          </v-card>
-        </v-flex>
-        <v-flex sm6 xs12 md6 lg4>
-          <v-card class="ma-3" outlined color="#f5f5f5">
-            <v-list-item>
-              <v-list-item-avatar tile class="mt-n7">
-                <v-sheet color="orange" width="80" height="80" elevation="10">
-                  <v-icon dark large>mdi-bike-fast</v-icon>
-                </v-sheet>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <div class="overline text-right">
-                  Orders In Transit
-                </div>
-                <div><v-divider></v-divider></div>
-              </v-list-item-content>
-            </v-list-item>
-            <v-card-actions>
-              <v-list-item-title class="headline mb-1 text-right">
-                  {{dashboard.inTransit || 0}}
-              </v-list-item-title>
-            </v-card-actions>
-          </v-card>
-        </v-flex>
-        <v-flex sm6 xs12 md6 lg4>
-          <v-card class="ma-3" outlined color="#f5f5f5">
-            <v-list-item>
-              <v-list-item-avatar tile class="mt-n7">
-                <v-sheet color="secondary" width="80" height="80" elevation="10">
-                  <v-icon dark large>mdi-playlist-remove</v-icon>
-                </v-sheet>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <div class="overline text-right">
-                  Orders Returned
-                </div>
-                <div><v-divider></v-divider></div>
-              </v-list-item-content>
-            </v-list-item>
-            <v-card-actions>
-              <v-list-item-title class="headline mb-1 text-right">
-                  {{dashboard.returned || 0}}
-              </v-list-item-title>
-            </v-card-actions>
-          </v-card>
-        </v-flex>
-        <v-flex sm6 xs12 md6 lg4>
-          <v-card class="ma-3" outlined color="#f5f5f5">
-            <v-list-item>
-              <v-list-item-avatar tile class="mt-n7">
-                <v-sheet color="blue" width="80" height="80" elevation="10">
-                  <v-icon dark large>mdi-brightness-percent</v-icon>
-                </v-sheet>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <div class="overline text-right">
-                  Successful Delivery
-                </div>
-                <div><v-divider></v-divider></div>
-              </v-list-item-content>
-            </v-list-item>
-            <v-card-actions>
-              <v-list-item-title class="headline mb-1 text-right">
-                  {{successfulDelivery}}%
-              </v-list-item-title>
-            </v-card-actions>
-          </v-card>
-        </v-flex>
-        <v-flex sm6 xs12 md6 lg4>
-          <v-card class="ma-3" outlined color="#f5f5f5">
-            <v-list-item>
-              <v-list-item-avatar tile class="mt-n7">
-                <v-sheet color="red" width="80" height="80" elevation="10">
-                  <v-icon dark large>mdi-close-outline</v-icon>
-                </v-sheet>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <div class="overline text-right">
-                  Orders Cancelled
-                </div>
-                <div><v-divider></v-divider></div>
-              </v-list-item-content>
-            </v-list-item>
-            <v-card-actions>
-              <v-list-item-title class="headline mb-1 text-right">
-                  0
-              </v-list-item-title>
-            </v-card-actions>
-          </v-card>
+        <v-flex sm6 xs12 md4 lg3
+        v-for="d, idx in dashaboardData" :key="idx">
+          <card :data="d"/>
         </v-flex>
       </v-layout>
     </div>
@@ -159,8 +28,12 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import Card from './Card.vue';
 
 export default {
+  components: {
+    Card,
+  },
   data: () => ({
     dashboard: {},
     isFetching: false,
@@ -172,6 +45,35 @@ export default {
       if (Number.isNaN(rate)) return 0;
       if (rate === 100 || rate === 0) return 100;
       return rate?.toFixed(2);
+    },
+    dashaboardData() {
+      const dashboard = [
+        {
+          text: 'Orders placed', color: 'teal', icon: 'mdi-clipboard-list-outline', count: this.dashboard?.total,
+        },
+        {
+          text: 'Orders pending', color: '#350d36', icon: 'mdi-progress-clock', count: this.dashboard?.pending,
+        },
+        {
+          text: 'Orders In Transit', color: 'orange', icon: 'mdi-bike-fast', count: this.dashboard?.inTransit,
+        },
+        {
+          text: 'Orders Cancelled', color: 'black', icon: 'mdi-playlist-remove', count: this.dashboard?.cancelled,
+        },
+        {
+          text: 'Orders returned', color: '#1264a3', icon: 'mdi-reload', count: this.dashboard?.returned,
+        },
+        {
+          text: 'Orders Delivered', color: 'green', icon: 'mdi-playlist-check', count: this.dashboard?.delivered,
+        },
+        {
+          text: 'Orders rejected', color: 'red', icon: 'mdi-close-outline', count: this.dashboard?.declined,
+        },
+        {
+          text: 'SUCCESSFUL DELIVERY', color: 'blue', icon: 'mdi-brightness-percent', count: this.successfulDelivery,
+        },
+      ];
+      return dashboard;
     },
   },
   watch: {
