@@ -1,4 +1,4 @@
 module.exports = {
-  baseURL: 'http://localhost:4141',
-  // baseURL: 'http://3.1.200.36:4141',
+  // baseURL: 'http://localhost:4141',
+  baseURL: 'https://api.freshagric.com',
 };

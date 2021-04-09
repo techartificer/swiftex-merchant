@@ -14,7 +14,7 @@
           <v-spacer></v-spacer>
           <div>
             <v-chip color="secondary" class="pl-5 pr-5">
-              {{balance}} : {{Math.abs(Trx.balance)}}
+              {{balance}} : {{Math.abs(Trx.balance) || 0}}
             </v-chip>
           </div>
         </v-card-title>
@@ -75,13 +75,16 @@ export default {
     headers() {
       return [
         {
-          text: 'Transaction ID',
+          text: 'Payment Type',
+          value: 'paymentType',
           align: 'start',
+        },
+        {
+          text: 'Transaction ID',
           sortable: false,
           value: 'id',
         },
         { text: 'Payment', value: 'payment' },
-        { text: 'Payment Type', value: 'paymentType' },
         { text: 'Transaction Time', value: 'createdAt' },
         { text: 'Order', value: 'orderId' },
       ];

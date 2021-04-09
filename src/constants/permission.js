@@ -16,8 +16,8 @@ const OWNER = [
   { icon: 'mdi-cash-usd', title: 'Transaction', to: '/transactions' },
   // { icon: 'mdi-account-group', title: 'Moderator', to: '/moderator' },
   // { icon: 'mdi-ticket-percent', title: 'Coupon', to: '/coupon' },
-  { icon: 'mdi-map', title: 'Coverage Area', to: '/area' },
-  { icon: 'mdi-alert-octagon', title: 'Raise Issue', to: '/issue' },
+  // { icon: 'mdi-map', title: 'Coverage Area', to: '/area' },
+  // { icon: 'mdi-alert-octagon', title: 'Raise Issue', to: '/issue' },
   { icon: 'mdi-logout', title: 'Logout', to: '/logout' },
 ];
 const COMMON = [];

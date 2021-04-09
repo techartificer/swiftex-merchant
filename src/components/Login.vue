@@ -8,63 +8,67 @@
       lg="4"
     >
       <v-card ref="form" class="mt-16" :class="{'pa-10': !isMobile}" outlined max-width="500">
-        <v-card-text>
-          <div class="login">
-            <img src="../assets/logo.png" alt="logo" class="log-img">
-          </div>
-          <v-text-field
-            autocomplete="off"
-            ref="phone"
-            :prefix="prefixText"
-            @focus="focusEvent"
-            @blur="focusEvent"
-            dense
-            outlined
-            v-model="phone"
-            :rules="[() => !!phone || 'This field is required', validatePhoneNumber]"
-            label="Phone"
-            type="tel"
-            required
-          ></v-text-field>
-          <v-text-field
-            autocomplete="off"
-            ref="password"
-            dense
-            outlined
-            v-model="password"
-            :rules="[() => !!password || 'This field is required']"
-            label="Password"
-            type="password"
-            required
-            @keyup.enter="handleLogin"
-          ></v-text-field>
-          <div class="login">
-            <v-btn color="primary"
-            :block="!isLoading"
-            :fab="isLoading"
-            :loading="isLoading"
-            :small="isLoading"
-            @click="handleLogin"
-            >Login</v-btn>
-          </div>
-          <!-- <div class="mt-4 signup-header">
-            Don't Have An Account?
-          </div> -->
-          <div class="mt-2">
-            <v-btn
-              v-if="!showOTP && !isLoading"
-              color="secondary"
-              block
-              class="mt-2"
-              @click="$router.push('/register')"
-            >
-              Join as a merchant
-            </v-btn>
-          <div text class="mt-2 btns-forgot">
-              Forgot Password?
-          </div>
-          </div>
-        </v-card-text>
+        <v-form>
+          <v-card-text>
+            <div class="login">
+              <img src="../assets/logo.png" alt="logo" class="log-img">
+            </div>
+            <v-text-field
+              autocomplete="off"
+              single-line
+              ref="phone"
+              :prefix="prefixText"
+              @focus="focusEvent"
+              @blur="focusEvent"
+              dense
+              outlined
+              placeholder="Phone"
+              v-model="phone"
+              :rules="[() => !!phone || 'This field is required', validatePhoneNumber]"
+              type="tel"
+              required
+            ></v-text-field>
+            <v-text-field
+              autocomplete="off"
+              single-line
+              ref="password"
+              dense
+              outlined
+              v-model="password"
+              :rules="[() => !!password || 'This field is required']"
+              placeholder="Password"
+              type="password"
+              required
+              @keyup.enter="handleLogin"
+            ></v-text-field>
+            <div class="login">
+              <v-btn color="primary"
+              :block="!isLoading"
+              :fab="isLoading"
+              :loading="isLoading"
+              :small="isLoading"
+              @click="handleLogin"
+              >Login</v-btn>
+            </div>
+            <!-- <div class="mt-4 signup-header">
+              Don't Have An Account?
+            </div> -->
+            <div class="mt-2">
+              <v-btn
+                v-if="!showOTP && !isLoading"
+                color="secondary"
+                block
+                class="mt-2"
+                @click="$router.push('/register')"
+              >
+                Join as a merchant
+              </v-btn>
+            <div text class="mt-2 btns-forgot">
+                Forgot Password?
+            </div>
+            </div>
+          </v-card-text>
+        </v-form>
       </v-card>
     </v-col>
   </v-row>
@@ -80,8 +84,8 @@ export default {
   data() {
     return {
       prefixText: '',
-      phone: '01797459062',
-      password: '@sadat642',
+      phone: '',
+      password: '',
       isLoading: false,
       showOTP: false,
     };
