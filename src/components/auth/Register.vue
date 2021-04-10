@@ -82,7 +82,7 @@
               dense
               outlined
               v-model="name"
-              label="Name"
+              label="Your Name"
               validate-on-blur
               :rules="[() => !!name || 'This field is required']"
               required
