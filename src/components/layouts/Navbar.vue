@@ -1,5 +1,31 @@
 <template>
   <div id="inspire">
+    <v-dialog
+    v-model="logoutPrompt"
+    width="300">
+      <v-card>
+        <v-card-title>
+          Are you sure?
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+          depressed
+          small
+          color="primary"
+          @click="logoutPrompt=0">
+            No
+          </v-btn>
+          <v-btn
+          depressed
+          small
+          color="secondary"
+          @click="goToRoute('/logout')">
+            Yes
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <track-dialog />
     <v-navigation-drawer
     v-if="true"
@@ -22,6 +48,15 @@
           </v-list-item-icon>
           <v-list-item-content :class="{active: item.to===routePath}">
             <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item
+        @click="logoutPrompt=true">
+          <v-list-item-icon>
+            <v-icon :class="{active: '/logout'===routePath}">mdi-logout</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content :class="{active: '/logout'===routePath}">
+            <v-list-item-title>Logout</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -173,6 +208,7 @@ export default {
     drawer: true,
     bottomNav: true,
     isInit: true,
+    logoutPrompt: false,
   }),
   created() {
     this.$vuetify.theme.dark = false;

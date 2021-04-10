@@ -18,7 +18,7 @@ const OWNER = [
   // { icon: 'mdi-ticket-percent', title: 'Coupon', to: '/coupon' },
   // { icon: 'mdi-map', title: 'Coverage Area', to: '/area' },
   // { icon: 'mdi-alert-octagon', title: 'Raise Issue', to: '/issue' },
-  { icon: 'mdi-logout', title: 'Logout', to: '/logout' },
+  // { icon: 'mdi-logout', title: 'Logout', to: '/logout' },
 ];
 const COMMON = [];
 
