@@ -1,7 +1,7 @@
 <template>
   <div>
     <transition name="fade">
-      <add-percel v-if="showAddPercel"/>
+      <add-parcel v-if="showAddPercel"/>
     </transition>
     <template v-if="!showAddPercel">
     <transition name="fade">
@@ -10,7 +10,7 @@
       outlined>
         <v-card-text>
           <v-row dense>
-            <v-col>
+            <v-col lg="3" md="6" sm="12" cols="12">
               <v-text-field
               v-model="phone"
               single-line
@@ -18,7 +18,7 @@
               dense
               label="Phone"> </v-text-field>
             </v-col>
-            <v-col>
+            <v-col lg="3" md="6" sm="12" cols="12">
               <v-text-field
               v-model="trackId"
               single-line
@@ -26,7 +26,7 @@
               dense
               label="Track ID"> </v-text-field>
             </v-col>
-            <v-col>
+            <v-col lg="3" md="6" sm="12" cols="12">
               <v-dialog
                 light
                 ref="dialog"
@@ -70,7 +70,7 @@
                 </v-date-picker>
               </v-dialog>
             </v-col>
-            <v-col cols="lg-4">
+            <v-col lg="3" md="6" sm="12" cols="12">
                 <v-btn
                 :disabled="searchDisabled"
                 depressed
@@ -87,7 +87,7 @@
                 <v-btn
                 @click="addPercelInit"
                 depressed
-                color="primary">Add Percel</v-btn>
+                color="primary">Add {{isMobile ? '' : 'Parcel'}}</v-btn>
             </v-col>
           </v-row>
         </v-card-text>
@@ -99,8 +99,9 @@
         :items="Orders"
         class="elevation-0"
         :loading="isInit"
+        :items-per-page="1000000"
+        hide-default-footer
       >
-
         <template v-slot:item.recipientPhone="{ item }">
           {{item.recipientPhone.substr(2)}}
         </template>
@@ -109,16 +110,16 @@
             <template v-slot:activator="{ on, attrs }">
               <v-chip
                 small
-                @click="getColor"
                 color="black"
                 dark
                 v-bind="attrs"
                 v-on="on"
+                @click="trackParcel(item.trackId)"
               >
-                {{item.trackId.substr(2)}}
+                {{item.trackId}}
               </v-chip>
             </template>
-            <span>Track percel</span>
+            <span>Track parcel</span>
           </v-tooltip>
         </template>
         <template v-slot:item.isAccepted="{ item }">
@@ -133,29 +134,37 @@
         <template v-slot:item.requestedDeliveryTime="{ item }">
           {{getTime(item.requestedDeliveryTime)}}
         </template>
-        <template v-slot:item.deliverdAt="{ item }">
+        <template v-slot:item.deliveredAt="{ item }">
           <v-chip
-            :color="getDeliveredAt(item.deliverdAt).color"
+            :color="getDeliveredAt(item.deliveredAt).color"
             dark
             small
           >
-          {{getDeliveredAt(item.deliverdAt).time}}
+          {{getDeliveredAt(item.deliveredAt).time}}
           </v-chip>
         </template>
         <template v-slot:item.actions="{ item }">
-          <v-icon
-            small
-            class="mr-2"
-            @click="editItem(item)"
-          >
-            mdi-pencil
-          </v-icon>
-          <v-icon
-            small
-            @click="viewPercel(item)"
-          >
-            mdi-eye
-          </v-icon>
+          <v-btn
+          x-small
+          text
+          fab
+          @click="editItem(item)">
+            <v-icon > mdi-pencil </v-icon>
+          </v-btn>
+          <v-btn
+          x-small
+          text
+          fab
+           @click="viewPercel(item)">
+            <v-icon > mdi-eye </v-icon>
+          </v-btn>
+          <v-btn
+          x-small
+          text
+          fab
+          @click="copyToClipboard(item)">
+            <v-icon>mdi-content-copy</v-icon>
+          </v-btn>
         </template>
       </v-data-table>
       <div class="text-center pt-2">
@@ -170,16 +179,17 @@
 </template>
 <script>
 /* eslint-disable vue/no-side-effects-in-computed-properties */
-
+/* eslint-disable vue/valid-v-slot */
+import copy from 'copy-to-clipboard';
 import { mapActions, mapGetters } from 'vuex';
 import moment from 'moment';
-import AddPercel from './Add.vue';
+import AddParcel from './Add.vue';
 import eventBus from '../../helpers/eventBus';
 import constants from '../../constants';
 
 export default {
   components: {
-    AddPercel,
+    AddParcel,
   },
   data: () => ({
     showAddPercel: false,
@@ -194,11 +204,22 @@ export default {
     itemsPerPage: 10,
     searchInit: false,
     isSearched: false,
+    isSearching: false,
   }),
   computed: {
     ...mapGetters(['Orders', 'CurrentShop']),
+    isMobile() {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return true;
+        case 'sm': return true;
+        default: return false;
+      }
+    },
     searchDisabled() {
       return !this.phone && !this.trackId && this.dates.length !== 2;
+    },
+    allEmpty() {
+      return this.phone === '' && this.dates.length === 0 && this.trackId === '';
     },
     dateRangeText() {
       if (this.dates.length === 2) {
@@ -224,10 +245,10 @@ export default {
         { text: 'Area', value: 'recipientArea' },
         { text: 'City', value: 'recipientCity' },
         { text: 'Price', value: 'price' },
-        { text: 'Type', value: 'parcelType' },
+        { text: 'Current Status', value: 'currentStatus' },
         { text: 'Delivery Type', value: 'deliveryType' },
         { text: '# of Items', value: 'numberOfItems' },
-        { text: 'Delivered', value: 'deliverdAt' },
+        { text: 'Delivered', value: 'deliveredAt' },
         { text: 'Actions', value: 'actions' },
       ];
     },
@@ -242,6 +263,11 @@ export default {
     CurrentShop() {
       this.intialize();
     },
+    allEmpty(val) {
+      if (val) {
+        this.intialize();
+      }
+    },
     phone() {
       this.trackId = '';
     },
@@ -253,9 +279,23 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['ORDERS_REQUEST']),
+    ...mapActions(['ORDERS_REQUEST', 'TRACK_ORDER']),
+    copyToClipboard(order) {
+      copy(`Hello ${order.recipientName},\n\nYour order track ID is: ${order.trackId}\nClick the URL to track https://swiftex.app?track=${order.trackId}\n\nThanks,\n${this.CurrentShop.name}`);
+      this.$toast('Copied to clipboard');
+    },
     addPercelInit() {
       this.showAddPercel = true;
+    },
+    async trackParcel(id) {
+      try {
+        if (this.isSearching) return;
+        this.isSearching = true;
+        await this.TRACK_ORDER(id);
+      } catch (err) {
+        // err
+      }
+      this.isSearching = false;
     },
     viewPercel(item) {
       console.log(item);
@@ -297,7 +337,10 @@ export default {
       this.isSearched = false;
     },
     async intialize() {
-      if (!this.CurrentShop) return;
+      if (!this.CurrentShop) {
+        this.isInit = false;
+        return;
+      }
       try {
         await this.ORDERS_REQUEST({ shopId: this.CurrentShop.id });
       } catch (err) {
@@ -314,8 +357,7 @@ export default {
       return 'N/A';
     },
     getDeliveredAt(t) {
-      // const constDate = '0001-01-01T00:00:00Z';
-      if (t && new Date(t) > new Date('2020-12-31 00:00:00')) {
+      if (t) {
         return {
           time: moment(t).format('DD MMM YYYY'),
           color: 'success',

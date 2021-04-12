@@ -1,55 +1,78 @@
 <template>
-<v-row justify="center">
+<div class="root">
+  <v-row :justify="isMobile?'center': 'end'" class="cmt-12">
     <v-col
       cols="8"
       sm="10"
       md="4"
       lg="4"
     >
-      <v-card ref="form" class="pa-10 mt-16" outlined>
-        <v-card-text>
-          <div class="login">
-            <img src="../assets/logo.png" alt="logo" class="log-img">
-          </div>
-          <v-text-field
-            autocomplete="off"
-            ref="phone"
-            :prefix="prefixText"
-            @focus="focusEvent"
-            @blur="focusEvent"
-            dense
-            outlined
-            v-model="phone"
-            :rules="[() => !!phone || 'This field is required', validatePhoneNumber]"
-            label="Phone"
-            type="tel"
-            required
-          ></v-text-field>
-          <v-text-field
-            autocomplete="off"
-            ref="password"
-            dense
-            outlined
-            v-model="password"
-            :rules="[() => !!password || 'This field is required']"
-            label="Password"
-            type="password"
-            required
-            @keyup.enter="handleLogin"
-          ></v-text-field>
-          <div class="login">
-            <v-btn color="primary"
-            :block="!isLoading"
-            :fab="isLoading"
-            :loading="isLoading"
-            :small="isLoading"
-            @click="handleLogin"
-            >Login</v-btn>
-          </div>
-        </v-card-text>
+      <v-card ref="form" class="mt-16" :class="{'pa-10': !isMobile}" outlined max-width="500">
+        <v-form>
+          <v-card-text>
+            <div class="login">
+              <img src="../assets/logo.png" alt="logo" class="log-img">
+            </div>
+            <v-text-field
+              autocomplete="off"
+              single-line
+              ref="phone"
+              :prefix="prefixText"
+              @focus="focusEvent"
+              @blur="focusEvent"
+              dense
+              outlined
+              placeholder="Phone"
+              v-model="phone"
+              :rules="[() => !!phone || 'This field is required', validatePhoneNumber]"
+              type="tel"
+              required
+            ></v-text-field>
+            <v-text-field
+              autocomplete="off"
+              single-line
+              ref="password"
+              dense
+              outlined
+              v-model="password"
+              :rules="[() => !!password || 'This field is required']"
+              placeholder="Password"
+              type="password"
+              required
+              @keyup.enter="handleLogin"
+            ></v-text-field>
+            <div class="login">
+              <v-btn color="primary"
+              :block="!isLoading"
+              :fab="isLoading"
+              :loading="isLoading"
+              :small="isLoading"
+              @click="handleLogin"
+              >Login</v-btn>
+            </div>
+            <!-- <div class="mt-4 signup-header">
+              Don't Have An Account?
+            </div> -->
+            <div class="mt-2">
+              <v-btn
+                v-if="!showOTP && !isLoading"
+                color="secondary"
+                block
+                class="mt-2"
+                @click="$router.push('/register')"
+              >
+                Join as a merchant
+              </v-btn>
+            <div text class="mt-2 btns-forgot">
+                Forgot Password?
+            </div>
+            </div>
+          </v-card-text>
+        </v-form>
       </v-card>
     </v-col>
   </v-row>
+</div>
 </template>
 
 <script>
@@ -61,12 +84,20 @@ export default {
   data() {
     return {
       prefixText: '',
-      phone: '01797459062',
-      password: '@sadat642',
+      phone: '',
+      password: '',
       isLoading: false,
+      showOTP: false,
     };
   },
   computed: {
+    isMobile() {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return true;
+        case 'sm': return true;
+        default: return false;
+      }
+    },
     loginForm() {
       return {
         password: this.password,
@@ -123,5 +154,28 @@ img.log-img {
     margin: 30px;
     margin-top: 10px;
     height: 70px;
+}
+.btns-forgot {
+  padding-top: 10px;
+  color: #c83843;
+  display: flex;
+  justify-content: flex-end;
+  font-weight: 600;
+  cursor: pointer;
+  // text-decoration: underline;
+}
+.signup-header {
+  color: #c83843;
+  display: flex;
+  justify-content: center;
+}
+.cmt-12 {
+  margin-top: 12vh;
+}
+.root {
+  background-image: url("../assets/swiftex_back.webp");
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
 }
 </style>

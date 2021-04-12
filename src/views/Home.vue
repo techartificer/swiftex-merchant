@@ -1,7 +1,8 @@
 <template>
   <div>
     <Login v-if="!IsLoggedIn"/>
-    <div v-else> {{CurrentShop}}</div>
+    <Dashboard v-else />
+    <!-- <div v-else> {{CurrentShop}}</div> -->
   </div>
 </template>
 
@@ -9,11 +10,13 @@
 // @ is an alias to /src
 import { mapGetters } from 'vuex';
 import Login from '../components/Login.vue';
+import Dashboard from '../components/Dashboard/Dashboard.vue';
 
 export default {
   name: 'Home',
   components: {
     Login,
+    Dashboard,
   },
   computed: {
     ...mapGetters(['IsLoggedIn', 'CurrentShop']),

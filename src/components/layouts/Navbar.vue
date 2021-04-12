@@ -1,5 +1,32 @@
 <template>
   <div id="inspire">
+    <v-dialog
+    v-model="logoutPrompt"
+    width="300">
+      <v-card>
+        <v-card-title>
+          Are you sure?
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+          depressed
+          small
+          color="primary"
+          @click="logoutPrompt=0">
+            No
+          </v-btn>
+          <v-btn
+          depressed
+          small
+          color="secondary"
+          @click="goToRoute('/logout')">
+            Yes
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <track-dialog />
     <v-navigation-drawer
     v-if="true"
       v-model="drawer"
@@ -23,6 +50,15 @@
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item
+        @click="logoutPrompt=true">
+          <v-list-item-icon>
+            <v-icon :class="{active: '/logout'===routePath}">mdi-logout</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content :class="{active: '/logout'===routePath}">
+            <v-list-item-title>Logout</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-bottom-navigation
@@ -35,7 +71,7 @@
         single-line
         outlined
         dense
-        label="Type percel id here"
+        label="Type parcel id here"
         color="secondary"
         :loading="isSearching"
         ></v-text-field>
@@ -44,7 +80,9 @@
         class="ml_-1"
         color="secondary"
         depressed
-        >Track Percel</v-btn>
+        @click="trackParcel"
+        :loading="isSearching"
+        >Track Parcel</v-btn>
     </v-bottom-navigation>
     <v-app-bar
       app
@@ -64,7 +102,7 @@
         single-line
         outlined
         dense
-        label="Type percel id here"
+        label="Type parcel id here"
         color="secondary"
         :loading="isSearching"
         ></v-text-field>
@@ -74,7 +112,9 @@
         class="ml_-1"
         color="black"
         elevation="0"
-        >Track Percel</v-btn>
+        @click="trackParcel"
+        :loading="isSearching"
+        >Track Parcel</v-btn>
         <v-spacer></v-spacer>
         <v-btn
         small
@@ -141,7 +181,9 @@
         rounded
         text
         outlined
-        :loading="isInit">
+        :loading="isInit"
+        @click="createNewShop"
+        >
           Create <v-icon> mdi-plus</v-icon>
         </v-btn>
     </v-app-bar>
@@ -153,9 +195,11 @@ import { mapGetters, mapActions } from 'vuex';
 import constants from '../../constants';
 import permission from '../../constants/permission';
 import eventBus from '../../helpers/eventBus';
+import TrackDialog from '../parcel/Track.vue';
 
 export default {
   components: {
+    TrackDialog,
   },
   data: () => ({
     isSearching: false,
@@ -164,6 +208,7 @@ export default {
     drawer: true,
     bottomNav: true,
     isInit: true,
+    logoutPrompt: false,
   }),
   created() {
     this.$vuetify.theme.dark = false;
@@ -186,12 +231,11 @@ export default {
       return this.$route.path;
     },
     isMobile() {
-      // eslint-disable-next-line default-case
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return true;
         case 'sm': return true;
+        default: return false;
       }
-      return false;
     },
     user() {
       if (!this.profile || !this.profile.name) return '';
@@ -203,16 +247,34 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['MY_SHOPS_REQUEST', 'SHOP_BY_ID_REQUEST', 'ORDERS_REQUEST']),
+    ...mapActions(['MY_SHOPS_REQUEST', 'SHOP_BY_ID_REQUEST',
+      'TRACK_ORDER', 'ORDERS_REQUEST']),
     async initialize() {
       const currentShopId = localStorage.getItem(constants.CURRENT_SHOP_ID);
       await this.MY_SHOPS_REQUEST();
-      if (!currentShopId) {
-        await this.SHOP_BY_ID_REQUEST(this.MyShops[0]?.id);
-      } else {
-        await this.SHOP_BY_ID_REQUEST(currentShopId);
+      try {
+        if (!currentShopId) {
+          if (!this.MyShops?.length) {
+            this.isInit = false;
+            return;
+          }
+          await this.SHOP_BY_ID_REQUEST(this.MyShops[0]?.id);
+        } else {
+          await this.SHOP_BY_ID_REQUEST(currentShopId);
+        }
+        this.isInit = false;
+      } catch (err) {
+        this.isInit = false;
       }
-      this.isInit = false;
+    },
+    async trackParcel() {
+      try {
+        this.isSearching = true;
+        await this.TRACK_ORDER(this.searchItem);
+      } catch (err) {
+        // err
+      }
+      this.isSearching = false;
     },
     createNewShop() {
       if (this.$route.path === '/my-shops') {

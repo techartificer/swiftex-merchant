@@ -1,7 +1,7 @@
 <template>
   <div class="root">
     <div class="head">
-      Orders
+      Parcels
     </div>
     <div class="order">
       <div class="order-add">
@@ -14,7 +14,7 @@
   </div>
 </template>
 <script>
-import List from '../components/percel/List.vue';
+import List from '../components/parcel/List.vue';
 
 export default {
   components: {

@@ -28,12 +28,25 @@ const routes = [
     },
   },
   {
-    path: '/percels',
-    name: 'Percels',
-    component: () => import('../views/Percels'),
+    path: '/parcels',
+    name: 'Parcels',
+    component: () => import('../views/Parcels'),
     meta: {
       requiresAuth: true,
     },
+  },
+  {
+    path: '/transactions',
+    name: 'Credit History',
+    component: () => import('../views/Transactions.vue'),
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/register',
+    name: 'Register     ',
+    component: () => import('../views/Register'),
   },
   // {
   //   path: '/*',

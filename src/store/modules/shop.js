@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import constants from '../../constants';
 import instance from '../../helpers/axios';
 
@@ -7,23 +8,55 @@ export default {
     myShops: [],
   },
   mutations: {
-    SET_SHOP_DATA(state, data) {
+    setShopData(state, data) {
       state.shop = data;
       localStorage.setItem(constants.CURRENT_SHOP_ID, data?.id);
     },
-    SET_MY_SHOPS(state, data) {
+    setMyShops(state, data) {
       state.myShops = data;
     },
-    ADD_SHOP(state, data) {
+    addShop(state, data) {
+      state.myShops = state.myShops || [];
       const shops = state.myShops?.splice(0);
       state.myShops = [...shops, data];
     },
+    updateShop(state, data) {
+      const idx = state.myShops.findIndex((s) => s.id === data.id);
+      if (idx >= 0) {
+        const shops = state.myShops.splice(0);
+        shops[idx] = data;
+        state.myShops = shops;
+        if (state.shop.id === data.id) {
+          state.shop = data;
+        }
+      }
+    },
   },
   actions: {
+    async UPDATE_SHOP_BY_SHOP_ID({ commit }, payload = { shopId: '', update: '' }) {
+      try {
+        const { shopId, update } = payload;
+        const { data } = await instance.patch(`/shop/id/${shopId}`, update);
+        commit('updateShop', data.data);
+        return data.data;
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
+    async DASHBOARD_BY_SHOP_ID({ state }, payload) {
+      try {
+        const id = state.shop?.id || payload;
+        if (!id) return {};
+        const { data } = await instance.get(`/shop/dashboard/${id}`);
+        return data?.data;
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
     async SHOP_BY_ID_REQUEST({ commit }, id) {
       try {
         const { data } = await instance.get(`/shop/id/${id}`);
-        commit('SET_SHOP_DATA', data?.data);
+        commit('setShopData', data?.data);
         return data?.data;
       } catch (err) {
         return Promise.reject(err);
@@ -32,7 +65,7 @@ export default {
     async CREATE_SHOP_REQUEST({ commit }, payload) {
       try {
         const { data } = await instance.post('/shop/create', payload);
-        commit('ADD_SHOP', data?.data);
+        commit('addShop', data?.data?.shop);
         return data?.data;
       } catch (err) {
         return Promise.reject(err);
@@ -41,7 +74,7 @@ export default {
     async MY_SHOPS_REQUEST({ commit }) {
       try {
         const { data } = await instance.get('/shop/myshops');
-        commit('SET_MY_SHOPS', data?.data);
+        commit('setMyShops', data?.data);
         return data?.data;
       } catch (err) {
         return Promise.reject(err);

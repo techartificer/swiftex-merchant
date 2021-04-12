@@ -107,7 +107,7 @@
                 depressed
                 rounded
                 color="secondary"
-                @click="handleAction"
+                @click="handleAction()"
                 :loading="isLoading"
                 >
                 {{isCreateForm ? 'Create' : 'Update'}}
@@ -168,7 +168,6 @@ export default {
     eventBus.$on(constants.events.SHOW_SHOP_CU_DIALOG, (data) => {
       this.show = true;
       if (data) {
-        console.log(data);
         const {
           name, address, pickupArea, phone, fbPage, pickupAddress, email, deliveryZone, id,
         } = data;
@@ -191,7 +190,7 @@ export default {
     });
   },
   methods: {
-    ...mapActions(['CREATE_SHOP_REQUEST']),
+    ...mapActions(['CREATE_SHOP_REQUEST', 'UPDATE_SHOP_BY_SHOP_ID']),
     crateNewShop() {
       this.show = true;
       if (!this.isCreateForm) {
@@ -224,10 +223,15 @@ export default {
             this.resetForm();
             this.show = false;
             this.$toast.success('Shop created successfully');
+          } else {
+            await this.UPDATE_SHOP_BY_SHOP_ID({ update: this.form, shopId: this.shopMongoId });
+            this.resetForm();
+            this.show = false;
+            this.$toast.success('Shop update successfully');
           }
         }
       } catch (err) {
-        // console.log(err);
+        console.log(err);
       }
       this.isLoading = false;
     },
