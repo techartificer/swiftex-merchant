@@ -16,6 +16,7 @@
             dense
             class="mt-2"
             v-model="amount"
+            type="number"
             ></v-text-field>
             <div>
               <v-btn depressed color="primary"
@@ -26,7 +27,7 @@
           </div>
           <div v-else-if="prompt===2">
             <div class="trx-code">
-              <div class="trx-code-text">658525</div>
+              <div class="trx-code-text">{{trxCode}}</div>
             </div>
             <div class="mt-5">
               Expires at: {{expireTime}}
@@ -40,7 +41,9 @@
     </v-dialog>
     <v-row no-gutters class="pa-5">
       <v-col
-        cols="12"
+        lg="8"
+        md="8"
+        sm="12"
       >
         <v-card
           class="pa-2"
@@ -51,16 +54,6 @@
           <div>Transaction History</div>
           <v-spacer></v-spacer>
           <div>
-            <v-btn
-            color="primary"
-            depressed
-            rounded
-            outlined
-            small
-            class="mr-2"
-            @click="genTrxCode">
-            Generate Trx COde
-            </v-btn>
             <v-chip color="secondary" class="pl-5 pr-5">
               {{balance}} : {{Math.abs(Trx.balance) || 0}}
             </v-chip>
@@ -102,6 +95,33 @@
     </div>
         </v-card>
       </v-col>
+      <v-col
+      lg="4"
+      md="4"
+      sm="12">
+        <v-card outlined min-height="217">
+        <v-card-title>Cash Out request</v-card-title>
+        <v-card-text v-if="Trx.amount">
+          <div class="amount">Cash out request amount: {{Trx.amount}}</div>
+          <div class="request-time mt-2">{{requestTime}}</div>
+          <v-btn depressed class="mt-5" color="secondary"
+          @click="cancelRequest"
+          >Cancel</v-btn>
+        </v-card-text>
+        <v-card-text v-else>
+          <v-btn
+            class="gen-code"
+            color="primary"
+            depressed
+            rounded
+            outlined
+            small
+            @click="genTrxCode">
+            Generate Trx COde
+            </v-btn>
+        </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
     <div class="pb-16"></div>
   </div>
@@ -121,6 +141,7 @@ export default {
     prompt: 1,
     hint: 'Your previous code will be destroyed',
     amount: '',
+    trxCode: '',
   }),
   computed: {
     ...mapGetters(['CurrentShop', 'Histories', 'Trx']),
@@ -144,6 +165,9 @@ export default {
     balance() {
       return this.Trx?.balance < 0 ? 'DUE' : 'BALANCE';
     },
+    requestTime() {
+      return moment(this.Trx.updatedAt).format('dddd DD-MM-YYYY mm:hh A');
+    },
   },
   watch: {
     CurrentShop(val) {
@@ -152,6 +176,7 @@ export default {
     trxCodeModal(val) {
       if (!val) {
         this.prompt = 1;
+        this.amount = '';
       }
     },
   },
@@ -159,14 +184,28 @@ export default {
     this.fetchTrxHistories(this.CurrentShop?.id);
   },
   methods: {
-    ...mapActions(['HISTORIES_BY_SHOP_ID']),
+    ...mapActions(['HISTORIES_BY_SHOP_ID', 'GENERATE_TRX_CODE_BY_SHOP_ID']),
     genTrxCode() {
       this.trxCodeModal = true;
     },
-    confirmGenCode() {
-      this.prompt = 2;
-      this.hint = 'Don\'t share your code with anyone.';
-      this.expireTime = moment(new Date()).format('DD, MMM YYYY hh:mmA');
+    async cancelRequest() {
+      try {
+        await this.GENERATE_TRX_CODE_BY_SHOP_ID({ amount: 0 });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async confirmGenCode() {
+      try {
+        if (+this.amount === 0) return;
+        this.hint = 'Don\'t share your code with anyone.';
+        const { trxCode } = await this.GENERATE_TRX_CODE_BY_SHOP_ID({ amount: +this.amount });
+        this.trxCode = trxCode;
+        this.prompt = 2;
+        this.expireTime = moment(new Date()).add(3, 'days').format('DD, MMM YYYY hh:mmA');
+      } catch (err) {
+        console.log(err);
+      }
     },
     showOrder(order) {
       console.log(order);
@@ -200,6 +239,17 @@ export default {
 .paymentType {
   font-size: larger;
   font-weight: 500;
+}
+.gen-code {
+    text-align: center;
+    position: absolute;
+    left: 32%;
+    top: 50%;
+}
+.amount {
+    font-size: medium;
+    font-weight: 500;
+    color: #454446;
 }
 .trx-code {
     width: 120px;
