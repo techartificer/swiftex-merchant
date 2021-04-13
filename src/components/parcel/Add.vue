@@ -21,15 +21,6 @@
               :rules="[() => !!name || 'This field is required' ]"
               outlined>
               </v-text-field>
-              <v-autocomplete
-              :rules="[() => !!pickupArea || 'This field is required' ]"
-              ref="pickHub"
-              :items="coverageAreas"
-              outlined
-              v-model="pickupArea"
-              dense
-              label="Pickup area"
-            ></v-autocomplete>
             <v-autocomplete
               ref="paymentStatus"
               :rules="[() => !!paymentStatus || 'This field is required' ]"
@@ -42,11 +33,11 @@
             <v-autocomplete
               ref="recipientArea"
               :rules="[() => !!deliveryZone || 'This field is required' ]"
-              :items="coverageAreas"
+              :items="thanas"
               outlined
               v-model="deliveryZone"
               dense
-              label="Delivery Zone"
+              label="Delivery Thana"
             ></v-autocomplete>
             <v-text-field
               :rules="[
@@ -60,9 +51,7 @@
               outlined>
             </v-text-field>
             <v-text-field
-              :rules="[
-                () => !!totalNumberOfItems || 'This field is required'
-              ]"
+              v-if="showMore"
               ref="numberOfItems"
               v-model="totalNumberOfItems"
               label="Total Number of Items"
@@ -71,15 +60,8 @@
               outlined>
             </v-text-field>
             <v-textarea
-              :rules="[() => !!pickAddress || 'This field is required' ]"
-              ref="pickAddress"
-              outlined
-              v-model="pickAddress"
-              dense
-              rows="1"
-              auto-grow
-              label="Pick Address"> </v-textarea>
-            <v-textarea
+              v-if="showMore"
+              :rules="[() => true]"
               ref="comments"
               outlined
               v-model="comments"
@@ -100,43 +82,6 @@
               dense
               outlined>
               </v-text-field>
-              <v-text-field
-              ref="recipientCity"
-              :rules="[() => !!city || 'This field is required']"
-              v-model="city"
-              label="City"
-              dense
-              type="city"
-              outlined>
-              </v-text-field>
-              <v-text-field
-              :rules="[() => !!thana || 'This field is required' ]"
-              ref="recipientThana"
-              v-model="thana"
-              label="Delivery Thana"
-              type="text"
-              dense
-              outlined>
-              </v-text-field>
-              <v-text-field
-              :rules="[
-                () => !!zip || 'This field is required'
-              ]"
-              ref="recipientZip"
-              v-model="zip"
-              label="Zip"
-              dense
-              outlined>
-            </v-text-field>
-            <v-autocomplete
-              :rules="[() => !!percelType || 'This field is required' ]"
-              ref="percelType"
-              :items="percelTypes"
-              outlined
-              v-model="percelType"
-              dense
-              label="Parcel type"
-            ></v-autocomplete>
             <v-autocomplete
               :rules="[() => !!deliveryType || 'This field is required' ]"
               ref="deliveryType"
@@ -164,10 +109,38 @@
               type="number"
               outlined>
             </v-text-field>
+              <v-textarea
+              v-if="showMore"
+              ref="pickAddress"
+              outlined
+              v-model="pickAddress"
+              dense
+              rows="1"
+              auto-grow
+              label="Pick Address"> </v-textarea>
+            <v-autocomplete
+              v-if="showMore"
+              ref="percelType"
+              :items="percelTypes"
+              outlined
+              v-model="percelType"
+              dense
+              label="Parcel type"
+            ></v-autocomplete>
             </v-col>
           </v-row>
           </v-card-text>
           <v-card-actions>
+            <v-btn
+            text
+            ripple
+            rounded
+            color="primary"
+            @click="showMore=!showMore"
+            >
+              {{showMore ? 'Show Less' : 'Show More'}}
+              <v-icon> {{showMore ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+             </v-btn>
             <v-spacer></v-spacer>
             <v-btn
             text
@@ -196,13 +169,14 @@ import { formatNumber } from '../../helpers/phoneNumber';
 
 export default {
   data: () => ({
+    showMore: false,
     thana: '',
-    city: '',
+    city: 'Dhaka',
     phone: '',
     recipientArea: '',
     recipientName: '',
     name: '',
-    percelType: '',
+    percelType: 'Product',
     recipientAddress: '',
     deliveryType: '',
     zip: '',
@@ -215,13 +189,14 @@ export default {
     pickAddress: '',
     weight: '',
     isLoading: false,
+    thanas: constants.thana,
   }),
   computed: {
     coverageAreas() {
       return constants.COVERAGE_AREAS;
     },
     percelTypes() {
-      return ['Documents', 'Products'];
+      return ['Document', 'Product'];
     },
     paymentStatuses() {
       return ['COD', 'PAID'];
@@ -237,19 +212,11 @@ export default {
     form() {
       return {
         deliveryType: this.deliveryType,
-        numberOfItems: this.totalNumberOfItems,
-        percelType: this.percelType,
         paymentStatus: this.paymentStatus,
-        pickAddress: this.pickAddress,
-        pickHub: this.pickupArea,
         recipientAddress: this.recipientAddress,
         recipientArea: this.deliveryZone,
-        recipientCity: this.city,
         recipientName: this.name,
         recipientPhone: this.phone,
-        recipientThana: this.thana,
-        recipientZip: this.zip,
-        comments: this.comments,
         price: this.price,
         weight: this.weight,
       };
@@ -266,6 +233,10 @@ export default {
       return isValid;
     },
     resetForm() {
+      this.percelType = 'Product';
+      this.totalNumberOfItems = '';
+      this.comments = '';
+      this.pickAddress = '';
       Object.keys(this.form).forEach((f) => {
         if (this.$refs[f]) { this.$refs[f].reset(); }
       });
@@ -276,16 +247,27 @@ export default {
       try {
         const { isValid, number } = formatNumber(`+88${this.form?.recipientPhone}`);
         if (validForm && isValid) {
-          this.form.numberOfItems = Number(this.form.numberOfItems);
-          this.form.price = Number(this.form.price);
-          this.form.recipientPhone = number;
-          this.form.weight = Number(this.form.weight);
-          await this.ORDER_CREATE(this.form);
+          const data = {
+            ...this.form,
+            percelType: this.percelType,
+            pickAddress: this.pickAddress || this.CurrentShop?.pickupAddress,
+            pickHub: this.pickupArea || this.CurrentShop?.pickupArea,
+            recipientCity: this.city,
+            recipientThana: this.deliveryZone,
+            recipientZip: this.zip,
+            price: Number(this.form.price),
+            recipientPhone: number,
+            weight: Number(this.form.weight),
+            comments: this.comments,
+            totalNumberOfItems: this.totalNumberOfItems === '' ? null : +this.totalNumberOfItems,
+          };
+          console.log(data);
+          await this.ORDER_CREATE(data);
           this.resetForm();
           this.$toast.success('Order created successfully');
         }
       } catch (err) {
-        // console.log(err);
+        console.log(err);
       }
       this.isLoading = false;
     },
