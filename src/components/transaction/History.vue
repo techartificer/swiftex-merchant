@@ -77,6 +77,7 @@
       </template>
       <template v-slot:item.orderId="{ item }">
         <v-btn @click="showOrder(item)"
+        v-if="item.orderId"
         depressed
         color="primary"
         roundeditem
@@ -92,7 +93,7 @@
         @click="loadMore"
         :loading="isFetching"
         small>Load More</v-btn>
-    </div>
+      </div>
         </v-card>
       </v-col>
       <v-col
@@ -117,7 +118,7 @@
             outlined
             small
             @click="genTrxCode">
-            Generate Trx COde
+            Request for Cash Out
             </v-btn>
         </v-card-text>
         </v-card>
@@ -202,7 +203,7 @@ export default {
         const { trxCode } = await this.GENERATE_TRX_CODE_BY_SHOP_ID({ amount: +this.amount });
         this.trxCode = trxCode;
         this.prompt = 2;
-        this.expireTime = moment(new Date()).add(3, 'days').format('DD, MMM YYYY hh:mmA');
+        this.expireTime = moment(new Date()).add(3, 'days').format('DD, MMM YYYY hh:mm A');
       } catch (err) {
         console.log(err);
       }
@@ -211,7 +212,7 @@ export default {
       console.log(order);
     },
     getTime({ createdAt }) {
-      return moment(createdAt).format('DD-MM-YYYY HH:MM:SS A');
+      return moment(createdAt).format('DD-MM-YYYY hh:mm:ss A');
     },
     getColor({ paymentType }) {
       return paymentType === constants.paymentType.IN ? 'green' : 'red';
