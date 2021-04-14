@@ -63,7 +63,8 @@
               >
                 Join as a merchant
               </v-btn>
-            <div text class="mt-2 btns-forgot">
+            <div text class="mt-2 btns-forgot"
+            @click="$router.push('/forgot-password')">
                 Forgot Password?
             </div>
             </div>
