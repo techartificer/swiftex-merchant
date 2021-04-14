@@ -1,7 +1,7 @@
 <template>
   <div>
     <transition name="fade">
-      <add-parcel v-if="showAddPercel"/>
+      <add-parcel v-if="showAddPercel" :parcel="editParcel"/>
     </transition>
     <template v-if="!showAddPercel">
     <transition name="fade">
@@ -145,6 +145,7 @@
         </template>
         <template v-slot:item.actions="{ item }">
           <v-btn
+          v-if="!item.isPicked"
           x-small
           text
           fab
@@ -205,6 +206,7 @@ export default {
     searchInit: false,
     isSearched: false,
     isSearching: false,
+    editParcel: null,
   }),
   computed: {
     ...mapGetters(['Orders', 'CurrentShop']),
@@ -256,6 +258,7 @@ export default {
   mounted() {
     this.intialize();
     eventBus.$on(constants.events.SHOW_ADD_PERCEL_DIALOG, (flag) => {
+      if (!flag) this.editParcel = null;
       this.showAddPercel = flag;
     });
   },
@@ -285,6 +288,10 @@ export default {
       this.$toast('Copied to clipboard');
     },
     addPercelInit() {
+      this.showAddPercel = true;
+    },
+    editItem(item) {
+      this.editParcel = item;
       this.showAddPercel = true;
     },
     async trackParcel(id) {

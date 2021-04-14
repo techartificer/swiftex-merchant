@@ -20,6 +20,14 @@ export default {
     setTrackData(state, data) {
       state.trcakedOrder = data;
     },
+    updateOrder(state, data) {
+      const idx = state.orders.findIndex((o) => o.id === data.id);
+      const orders = state.orders?.splice(0);
+      orders[idx] = { ...orders[idx], ...data };
+      setImmediate(() => {
+        state.orders = orders;
+      });
+    },
   },
   actions: {
     async TRACK_ORDER({ commit, state }, trackId = '') {
@@ -28,6 +36,17 @@ export default {
         const { data } = await instance.get(`order/track/${trackId}`);
         commit('setTrackData', data.data);
         state.showTrackDialog = trackId;
+        return data.data;
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
+    async UPDATE_ORDER({ commit, rootState }, payload = {}) {
+      try {
+        const { id, update } = payload;
+        const shopId = rootState?.shop?.shop?.id;
+        const { data } = await instance.patch(`order/id/${id}/shopId/${shopId}`, update);
+        commit('updateOrder', data.data);
         return data.data;
       } catch (err) {
         return Promise.reject(err);

@@ -154,7 +154,7 @@
             @click="handleAction"
             :loading="isLoading"
             >
-            Create
+            {{parcel ? 'Update' : 'Create'}}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -162,12 +162,13 @@
   </v-card>
 </template>
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import constants from '../../constants';
 import eventBus from '../../helpers/eventBus';
 import { formatNumber } from '../../helpers/phoneNumber';
 
 export default {
+  props: ['parcel'],
   data: () => ({
     showMore: false,
     thana: '',
@@ -191,7 +192,30 @@ export default {
     isLoading: false,
     thanas: constants.thana,
   }),
+  mounted() {
+    if (this.parcel) {
+      this.phone = this.parcel?.recipientPhone?.substr(2);
+      this.thana = this.parcel?.thana;
+      this.deliveryZone = this.parcel?.recipientArea;
+      this.deliveryType = this.parcel?.deliveryType;
+      this.name = this.parcel?.recipientName;
+      this.percelType = this.parcel?.percelType;
+      this.recipientAddress = this.parcel?.recipientAddress;
+      this.paymentStatus = this.parcel?.paymentStatus;
+      this.price = this.parcel?.price;
+      this.weight = this.parcel?.weight;
+      this.totalNumberOfItems = this.parcel?.numberOfItems;
+      this.comments = this.parcel?.comments;
+      this.percelType = this.parcel?.percelType;
+      this.pickAddress = this.parcel?.pickAddress;
+      const flag = this.parcel?.numberOfItems || this.parcel?.comments || this.parcel?.percelType !== 'Product';
+      if (flag) {
+        this.showMore = true;
+      }
+    }
+  },
   computed: {
+    ...mapGetters(['CurrentShop']),
     coverageAreas() {
       return constants.COVERAGE_AREAS;
     },
@@ -223,7 +247,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['ORDER_CREATE']),
+    ...mapActions(['ORDER_CREATE', 'UPDATE_ORDER']),
     validdateForm() {
       let isValid = true;
       Object.keys(this.form).forEach((f) => {
@@ -259,12 +283,17 @@ export default {
             recipientPhone: number,
             weight: Number(this.form.weight),
             comments: this.comments,
-            totalNumberOfItems: this.totalNumberOfItems === '' ? null : +this.totalNumberOfItems,
+            totalNumberOfItems: +this.totalNumberOfItems,
           };
-          console.log(data);
-          await this.ORDER_CREATE(data);
-          this.resetForm();
-          this.$toast.success('Order created successfully');
+          if (!this.parcel) {
+            await this.ORDER_CREATE(data);
+            this.resetForm();
+            this.$toast.success('Order created successfully');
+          } else {
+            this.UPDATE_ORDER({ id: this.parcel.id, update: data });
+            this.$toast.success('Order updated successfully');
+            this.closeAddPercel();
+          }
         }
       } catch (err) {
         console.log(err);
