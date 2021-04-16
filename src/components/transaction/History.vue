@@ -130,7 +130,7 @@
 
 <script>
 import moment from 'moment';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import constants from '../../constants';
 
 export default {
@@ -167,7 +167,6 @@ export default {
       return this.Trx?.balance < 0 ? 'DUE' : 'BALANCE';
     },
     requestTime() {
-      console.log(this.Trx);
       return moment(this.Trx.updatedAt).format('dddd DD-MM-YYYY hh:mm A');
     },
   },
@@ -186,7 +185,8 @@ export default {
     this.fetchTrxHistories(this.CurrentShop?.id);
   },
   methods: {
-    ...mapActions(['HISTORIES_BY_SHOP_ID', 'GENERATE_TRX_CODE_BY_SHOP_ID']),
+    ...mapActions(['HISTORIES_BY_SHOP_ID', 'GENERATE_TRX_CODE_BY_SHOP_ID', 'ORDER_BY_ID_AND_SHOP_ID']),
+    ...mapMutations(['setViewOrder']),
     genTrxCode() {
       this.trxCodeModal = true;
     },
@@ -194,7 +194,7 @@ export default {
       try {
         await this.GENERATE_TRX_CODE_BY_SHOP_ID({ amount: 0 });
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     },
     async confirmGenCode() {
@@ -209,8 +209,14 @@ export default {
         console.log(err);
       }
     },
-    showOrder(order) {
-      console.log(order);
+    async showOrder(item) {
+      try {
+        if (!item.orderId) return;
+        const order = await this.ORDER_BY_ID_AND_SHOP_ID(item?.orderId);
+        this.setViewOrder(order);
+      } catch (err) {
+        // console.log(err);
+      }
     },
     getTime({ createdAt }) {
       return moment(createdAt).format('DD-MM-YYYY hh:mm A');

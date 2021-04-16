@@ -145,7 +145,6 @@ export default {
     ...mapGetters(['ViewOrder']),
     isOrderViewAble: {
       get() {
-        console.log(this.ViewOrder);
         return !!this.ViewOrder;
       },
       set() {

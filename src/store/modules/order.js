@@ -34,6 +34,15 @@ export default {
     },
   },
   actions: {
+    async ORDER_BY_ID_AND_SHOP_ID({ rootState }, orderId = '') {
+      try {
+        const { id: shopId } = rootState.shop.shop;
+        const { data } = await instance.get(`order/id/${orderId}/shopId/${shopId}`);
+        return data.data;
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
     async TRACK_ORDER({ commit, state }, trackId = '') {
       try {
         if (!trackId) return {};
