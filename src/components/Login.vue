@@ -17,7 +17,8 @@
       lg="4"
       class="login-field"
     >
-      <v-card ref="form" class="mt-16" :class="{'pa-10': !isMobile}" flat max-width="500">
+      <v-card ref="form" class="mt-16" outlined
+      :class="{'pa-10': !isMobile}" max-width="500">
         <v-form>
           <v-card-text>
             <div class="login">
