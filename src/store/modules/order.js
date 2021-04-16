@@ -37,7 +37,7 @@ export default {
     async ORDER_BY_ID_AND_SHOP_ID({ rootState }, orderId = '') {
       try {
         const { id: shopId } = rootState.shop.shop;
-        const { data } = await instance.get(`order/id/${orderId}/shopId/${shopId}`);
+        const { data } = await instance.get(`/order/id/${orderId}/shopId/${shopId}`);
         return data.data;
       } catch (err) {
         return Promise.reject(err);
@@ -46,7 +46,7 @@ export default {
     async TRACK_ORDER({ commit, state }, trackId = '') {
       try {
         if (!trackId) return {};
-        const { data } = await instance.get(`order/track/${trackId}`);
+        const { data } = await instance.get(`/order/track/${trackId}`);
         commit('setTrackData', data.data);
         state.showTrackDialog = trackId;
         return data.data;
@@ -58,7 +58,7 @@ export default {
       try {
         const { id, update } = payload;
         const shopId = rootState?.shop?.shop?.id;
-        const { data } = await instance.patch(`order/id/${id}/shopId/${shopId}`, update);
+        const { data } = await instance.patch(`/order/id/${id}/shopId/${shopId}`, update);
         commit('updateOrder', data.data);
         return data.data;
       } catch (err) {

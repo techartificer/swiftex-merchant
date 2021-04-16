@@ -1,6 +1,24 @@
 <template>
-  <div>
-    <v-card width="450" class="mx-auto head pa-10" outlined>
+  <div class="root">
+    <div class="login-bg">
+    <img class="login-img" src="../../assets/delivery-login-page.svg" alt="">
+    <div class="login-txt">
+      <h1>
+        Ensure the safest & <br>
+        Fastest delivery in town.
+      </h1>
+    </div>
+  </div>
+    <v-row :justify="isMobile?'center': 'end ml-20'" class="cmt-12">
+    <v-col
+      cols="8"
+      sm="10"
+      md="4"
+      lg="4"
+      class="login-field"
+    >
+    <v-card ref="form" class="mt-16" min-height="400"
+     :class="{'pa-10': !isMobile}" outlined max-width="500">
       <v-card-text>
           <div class="login">
             <img src="../../assets/logo.png" alt="logo" class="log-img">
@@ -43,15 +61,14 @@
               :loading="isLoading"
               :small="isLoading"
               @click="initPhoneNumberVerification"
-              >Request OTP</v-btn>
+              >Search</v-btn>
               <v-btn
               v-if="!showOTP && !isLoading"
-              color="primary"
+              color="secondary"
               block
-              outlined
               class="mt-2"
               @click="$router.push('/')"
-              >already have an account</v-btn>
+              >Login</v-btn>
 
               <v-btn color="primary"
               v-if="showOTP"
@@ -77,6 +94,7 @@
             ></v-text-field>
             <v-text-field
               autocomplete="off"
+              autofocus
               ref="password"
               dense
               outlined
@@ -110,12 +128,14 @@
                 :fab="isLoading"
                 :loading="isLoading"
                 :small="isLoading"
-                @click="registerHandle"
+                @click="forgotPassHandle"
                 >Reset Password</v-btn>
             </div>
           </div>
         </v-card-text>
     </v-card>
+    </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -145,9 +165,16 @@ export default {
     token: '',
   }),
   computed: {
+    isMobile() {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return true;
+        case 'sm': return true;
+        default: return false;
+      }
+    },
     isAvilable() {
       const avilable = this.notAvailable && this.notAvailable.includes(`88${this.phone}`);
-      return !avilable ? true : 'Username already exist';
+      return !avilable ? true : 'You are not registered';
     },
     lengthCheck() {
       return this.password.length <= 5 ? 'Length should be at least 6' : true;
@@ -185,7 +212,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['IS_USERNAME_AVAILABLE', 'REGISTER']),
+    ...mapActions(['IS_USERNAME_AVAILABLE', 'FORGOT_PASSWORD']),
     focusEvent(e) {
       if (e.type === 'blur' && !this.phone) {
         this.prefixText = '';
@@ -201,12 +228,16 @@ export default {
       });
       return formHasErrors;
     },
-    async registerHandle() {
+    async forgotPassHandle() {
       this.isLoading = true;
       const formHasErrors = this.validdateForm();
       if (formHasErrors) return;
       try {
-        await this.REGISTER({ body: this.form, token: this.token });
+        await this.FORGOT_PASSWORD({
+          phone: this.phone,
+          password: this.password,
+          token: this.token,
+        });
         this.$toast.success('Password reset successful');
         this.$router.push('/');
       } catch (err) {
@@ -247,9 +278,9 @@ export default {
       if (isValid && this.isAvilable === true) {
         try {
           const isAvilable = await this.IS_USERNAME_AVAILABLE(number);
-          if (!isAvilable) {
+          if (isAvilable) {
             this.notAvailable.push(number);
-            this.$toast.error('Username already exist');
+            this.$toast.error('You are not registerd');
             this.isLoading = false;
             return;
           }
@@ -302,4 +333,89 @@ img.log-img {
     margin-top: 0px;
     height: 70px;
 }
+img.log-img {
+    margin: 30px;
+    margin-top: 10px;
+    height: 70px;
+}
+.btns-forgot {
+  padding-top: 10px;
+  color: #c83843;
+  display: flex;
+  justify-content: flex-end;
+  font-weight: 600;
+  cursor: pointer;
+  // text-decoration: underline;
+}
+.signup-header {
+  color: #c83843;
+  display: flex;
+  justify-content: center;
+}
+.cmt-12 {
+  display: flex;
+  justify-content: center;
+}
+.root {
+
+  height: 100vh;
+  /* background-image: url("../assets/swiftex_back.webp"); */
+  /* background-position: center; Center the image
+  background-repeat: no-repeat; Do not repeat the image */
+  /* background-size: cover; Resize the background image to cover the entire container */
+  display: flex;
+  justify-content: space-between;
+
+}
+.login-field {
+text-align: center;
+  margin-top: 12vh;
+}
+
+.login-bg {
+  background-image: linear-gradient(to right top, #e51414, #cf1c1d,
+   #b92224, #a32628, #8d292a, #822b33, #752e3a,
+    #67313e, #5d3747, #533c4b, #4a414b, #454446);
+  width: 50%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-img {
+  width: 60%;
+  margin-top: -100px;
+}
+
+.login-txt {
+  width: 100%;
+  color: #fff;
+  font-family: inherit;
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 20px;
+  margin-top: 100px;
+  letter-spacing: 2px;
+  font-size: 16px;
+}
+
+.ml-20 {
+  margin-right: 7%;
+}
+
+@media screen and (max-width: 960px) {
+  .ml-20 {
+    margin-right: 0;
+  }
+
+  .login-bg {
+  display: none;
+}
+  }
+
 </style>
