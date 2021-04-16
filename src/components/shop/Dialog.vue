@@ -144,7 +144,7 @@ export default {
       return constants.EMAIL_REGEX.test(String(this.email)) || 'Email is not valid';
     },
     pickupAreas() {
-      return ['Uttara', 'Savar', 'Mohakhali', 'Banani', 'Dhaka'];
+      return constants.thana;
     },
     validatePhoneNumber() {
       const { isValid } = formatNumber(`+88${this.phone}`);

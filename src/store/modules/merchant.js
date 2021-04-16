@@ -19,6 +19,7 @@ export default {
         const { data } = await instance.post('/merchant/register/', body, {
           headers: { FirebaseToken: token },
         });
+        commit('SET_AUTH_DATA', data?.data);
         return data.data;
       } catch (err) {
         return Promise.reject(err);

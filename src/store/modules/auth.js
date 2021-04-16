@@ -30,10 +30,10 @@ export default {
     },
   },
   actions: {
-    // eslint-disable-next-line no-unused-vars
     async FORGOT_PASSWORD({ commit }, payload = { token: '', phone: '', password: '' }) {
       try {
         const { data } = await instance.patch('merchant/forgot-password', payload);
+        commit('SET_AUTH_DATA', data?.data);
         return data;
       } catch (err) {
         return Promise.reject(err);
