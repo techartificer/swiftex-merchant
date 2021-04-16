@@ -9,9 +9,9 @@
       </h1>
     </div>
   </div>
-    <v-row :justify="isMobile?'center': 'end ml-20'" class="cmt-12">
+    <v-row :justify="isMobile?'center': 'end'" class="cmt-12 ml-20">
     <v-col
-      cols="8"
+      cols="12"
       sm="10"
       md="4"
       lg="4"
@@ -68,7 +68,7 @@
               block
               class="mt-2"
               @click="$router.push('/')"
-              >Login</v-btn>
+              >Back</v-btn>
 
               <v-btn color="primary"
               v-if="showOTP"
