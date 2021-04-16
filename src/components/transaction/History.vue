@@ -55,7 +55,7 @@
           <v-spacer></v-spacer>
           <div>
             <v-chip color="secondary" class="pl-5 pr-5">
-              {{balance}} : {{Math.abs(Trx.balance) || 0}}
+              {{balance}} : {{Trx.balance ? Math.abs(Trx.balance).toFixed(2) : 0}}
             </v-chip>
           </div>
         </v-card-title>
@@ -167,7 +167,8 @@ export default {
       return this.Trx?.balance < 0 ? 'DUE' : 'BALANCE';
     },
     requestTime() {
-      return moment(this.Trx.updatedAt).format('dddd DD-MM-YYYY mm:hh A');
+      console.log(this.Trx);
+      return moment(this.Trx.updatedAt).format('dddd DD-MM-YYYY hh:mm A');
     },
   },
   watch: {
@@ -212,7 +213,7 @@ export default {
       console.log(order);
     },
     getTime({ createdAt }) {
-      return moment(createdAt).format('DD-MM-YYYY hh:mm:ss A');
+      return moment(createdAt).format('DD-MM-YYYY hh:mm A');
     },
     getColor({ paymentType }) {
       return paymentType === constants.paymentType.IN ? 'green' : 'red';

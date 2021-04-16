@@ -1,5 +1,6 @@
 <template>
   <div id="inspire">
+    <ViewOrder />
     <v-dialog
     v-model="logoutPrompt"
     width="300">
@@ -196,10 +197,12 @@ import constants from '../../constants';
 import permission from '../../constants/permission';
 import eventBus from '../../helpers/eventBus';
 import TrackDialog from '../parcel/Track.vue';
+import ViewOrder from '../parcel/View.vue';
 
 export default {
   components: {
     TrackDialog,
+    ViewOrder,
   },
   data: () => ({
     isSearching: false,

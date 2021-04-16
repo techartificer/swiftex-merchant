@@ -5,8 +5,12 @@ export default {
     orders: [],
     trcakedOrder: null,
     showTrackDialog: '',
+    viewOrder: true,
   },
   mutations: {
+    setViewOrder(state, payload = null) {
+      state.viewOrder = payload;
+    },
     setOrders(state, data) {
       state.orders = data || [];
     },
@@ -82,5 +86,6 @@ export default {
     Orders: (state) => state.orders,
     ShowTrackDialog: (state) => state.showTrackDialog,
     TrcakedOrder: (state) => state.trcakedOrder,
+    ViewOrder: (state) => state.viewOrder,
   },
 };
