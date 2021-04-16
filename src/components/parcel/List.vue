@@ -182,7 +182,7 @@
 /* eslint-disable vue/no-side-effects-in-computed-properties */
 /* eslint-disable vue/valid-v-slot */
 import copy from 'copy-to-clipboard';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import moment from 'moment';
 import AddParcel from './Add.vue';
 import eventBus from '../../helpers/eventBus';
@@ -283,6 +283,7 @@ export default {
   },
   methods: {
     ...mapActions(['ORDERS_REQUEST', 'TRACK_ORDER']),
+    ...mapMutations(['setViewOrder']),
     copyToClipboard(order) {
       copy(`Hello ${order.recipientName},\n\nYour order track ID is: ${order.trackId}\nClick the URL to track https://swiftex.app?track=${order.trackId}\n\nThanks,\n${this.CurrentShop.name}`);
       this.$toast('Copied to clipboard');
@@ -305,7 +306,7 @@ export default {
       this.isSearching = false;
     },
     viewPercel(item) {
-      console.log(item);
+      this.setViewOrder(item);
     },
     async searchHandle() {
       this.isSearched = true;

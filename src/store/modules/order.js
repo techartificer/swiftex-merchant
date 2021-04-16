@@ -5,7 +5,7 @@ export default {
     orders: [],
     trcakedOrder: null,
     showTrackDialog: '',
-    viewOrder: true,
+    viewOrder: null,
   },
   mutations: {
     setViewOrder(state, payload = null) {

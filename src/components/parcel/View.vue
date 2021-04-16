@@ -3,19 +3,19 @@
     <v-dialog v-model="isOrderViewAble"
     width="900"
     >
-      <v-card>
+      <v-card v-if="isOrderViewAble">
         <v-card-title>
           <div class="inv">
             <div class="inv-title">
-              Invoice No: {{'xaAsw8'}}
+              Invoice No: {{ViewOrder.trackId}}
             </div>
             <div class="inv-date">
-              {{new Date().toString().substr(0, 24)}}
+              {{createdTime}}
             </div>
           </div>
           <v-spacer></v-spacer>
           <div class="">
-            <v-btn text color="secondary">Download</v-btn>
+            <v-btn text color="secondary"></v-btn>
           </div>
         </v-card-title>
         <v-card-text class="mt-3">
@@ -26,7 +26,7 @@
                 <div class="text-head">
                   Current Stateus:
                   <v-chip color="green" dark class="pb-2 pt-2">
-                    Delivered
+                    {{ViewOrder.currentStatus}}
                   </v-chip>
                 </div>
               </div>
@@ -37,7 +37,7 @@
                   </div>
                   <div>
                     <v-chip color="gray" dark class="pb-1 pt-1 pl-4 pr-4">
-                      Express
+                      {{ViewOrder.deliveryType}}
                     </v-chip>
                   </div>
                 </div>
@@ -50,8 +50,7 @@
                       Ammount to be collected:
                     </div>
                     <div>
-                      <span class="title-bold-1">&#2547;</span>
-                      1000
+                      <span class="title-bold-1">&#2547;</span>{{ViewOrder.price}}
                     </div>
                   </div>
                   <div class="payment-text">
@@ -59,8 +58,7 @@
                       Delivery Charge:
                     </div>
                     <div>
-                      <span class="title-bold-1">&#2547;</span>
-                      60
+                      <span class="title-bold-1">&#2547;</span>{{ViewOrder.charge}}
                     </div>
                   </div>
                   <div class="payment-text">
@@ -68,8 +66,7 @@
                       COD Charge:
                     </div>
                     <div>
-                      <span class="title-bold-1">&#2547;</span>
-                      10
+                      <span class="title-bold-1">&#2547;</span>{{COD}}
                     </div>
                   </div>
                   <div class="payment-text">
@@ -77,8 +74,7 @@
                       Total Payable amount:
                     </div>
                     <div>
-                      <span class="title-bold-1">&#2547;</span>
-                      920
+                      <span class="title-bold-1">&#2547;</span>{{payable}}
                     </div>
                   </div>
                 </div>
@@ -93,7 +89,7 @@
                      Name:
                     </div>
                     <div>
-                      Murad Khan
+                     {{ViewOrder.recipientName}}
                     </div>
                   </div>
                   <div class="payment-text fix">
@@ -101,7 +97,7 @@
                       Phone No:
                     </div>
                     <div>
-                      01710027639
+                      {{ViewOrder.recipientPhone.substr(2)}}
                     </div>
                   </div>
                   <div class="payment-text fix">
@@ -109,7 +105,7 @@
                       Delivery Adreess:
                     </div>
                     <div>
-                      13/16, Shisu Muhan, Boshak Lane, Warim, Dhaka - 1203
+                      {{ViewOrder.recipientAddress}}
                     </div>
                   </div>
                   <div class="payment-text fix">
@@ -117,7 +113,7 @@
                       Delivery Zone:
                     </div>
                     <div>
-                      Wari
+                      {{ViewOrder.recipientArea}}
                     </div>
                   </div>
                   <div class="payment-text fix">
@@ -125,8 +121,7 @@
                       Collectable Amount:
                     </div>
                     <div>
-                      <span class="title-bold-1">&#2547;</span>
-                      1014
+                      <span class="title-bold-1">&#2547;</span>{{ViewOrder.price}}
                     </div>
                   </div>
                 </div>
@@ -142,6 +137,7 @@
   </div>
 </template>
 <script>
+import moment from 'moment';
 import { mapGetters, mapMutations } from 'vuex';
 
 export default {
@@ -149,11 +145,22 @@ export default {
     ...mapGetters(['ViewOrder']),
     isOrderViewAble: {
       get() {
+        console.log(this.ViewOrder);
         return !!this.ViewOrder;
       },
       set() {
         this.setViewOrder(null);
       },
+    },
+    createdTime() {
+      return moment(this.ViewOrder?.createdAt).format('ddd, DD MMM, YYYY hh:mm A');
+    },
+    COD() {
+      if (this.ViewOrder?.paymentStatus === 'COD') { return (this.ViewOrder?.price / 100) * 1; }
+      return 0;
+    },
+    payable() {
+      return (this.ViewOrder?.price - this.COD - this.ViewOrder?.charge).toFixed(2);
     },
   },
   methods: {
@@ -203,6 +210,9 @@ export default {
     font-size: medium;
     font-weight: 400;
     padding: 3px 10px;
+  }
+  .payment-text {
+    grid-template-columns: 170px auto;
   }
   .payment-text.fix {
     grid-template-columns: 130px auto;
