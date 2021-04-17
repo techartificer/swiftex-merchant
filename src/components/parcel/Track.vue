@@ -70,14 +70,14 @@ export default {
           return {
             ...s,
             color: 'green',
-            time: moment(s.time).format('MM:HH A'),
+            time: moment(s.time).format('hh:mm A'),
             date: moment(s.time).format('ddd, DD-MM-YYYY'),
           };
         }
         return {
           ...s,
           color: colors[idx % colors.length],
-          time: moment(s.time).format('MM:HH A'),
+          time: moment(s.time).format('hh:mm A'),
           date: moment(s.time).format('ddd, DD-MM-YYYY'),
         };
       });

@@ -3,13 +3,13 @@
     class="card-comp mb-3"
     max-width="300"
     min-width="180"
-    height="200"
+    min-height="205"
     outlined
   >
     <v-card-title @click="setCurrentShop" class="pointer">{{shop.name}}</v-card-title>
     <v-card-text class="text--primary pointer text-body" @click="setCurrentShop">
-      <div> {{shop.address}}</div>
-      <div class="pt-1">+{{shop.phone}}</div>
+      <div> {{shop.pickupAddress}}</div>
+      <div class="pt-3">+{{shop.phone}}</div>
     </v-card-text>
     <v-card-actions>
       <v-icon color="secondary">mdi-check-circle</v-icon>
@@ -55,6 +55,6 @@ export default {
   cursor: pointer;
 }
 .text-body {
-  min-height: 85px;
+  min-height: 95px;
 }
 </style>

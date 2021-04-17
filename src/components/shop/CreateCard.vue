@@ -5,7 +5,7 @@
       class="mb-3 card-comp"
       max-width="300"
       min-width="180"
-      height="200"
+      min-height="205"
       outlined>
       <v-card-text class="text--primary center">
         <v-icon color="secondary" x-large>mdi-plus-circle-outline</v-icon>
@@ -44,7 +44,7 @@ export default {
 }
 .v-card__text.text--primary.center {
     text-align: center;
-    padding: 20%;
+    padding: 19%;
 }
 .card-inner-text {
     padding-top: 40px;

@@ -42,9 +42,9 @@ export default {
     ...mapGetters(['CurrentShop']),
     successfulDelivery() {
       const rate = (Number(this.dashboard?.delivered) / Number(this.dashboard?.total)) * 100;
-      if (Number.isNaN(rate)) return 0;
-      if (rate === 100 || rate === 0) return 100;
-      return rate?.toFixed(2);
+      if (Number.isNaN(rate)) return `${0}%`;
+      if (rate === 100 || rate === 0) return `${100}%`;
+      return `${rate?.toFixed(2)}%`;
     },
     dashaboardData() {
       const dashboard = [
