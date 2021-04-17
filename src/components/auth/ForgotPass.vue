@@ -12,7 +12,7 @@
     <v-row :justify="isMobile?'center': 'end'" class="cmt-12 ml-20">
     <v-col
       cols="12"
-      sm="8"
+      sm="10"
       md="4"
       lg="4"
       class="login-field"
@@ -61,14 +61,14 @@
               :loading="isLoading"
               :small="isLoading"
               @click="initPhoneNumberVerification"
-              >Request OTP</v-btn>
+              >Search</v-btn>
               <v-btn
               v-if="!showOTP && !isLoading"
               color="secondary"
               block
               class="mt-2"
               @click="$router.push('/')"
-              >already have an account</v-btn>
+              >Back</v-btn>
 
               <v-btn color="primary"
               v-if="showOTP"
@@ -95,28 +95,6 @@
             <v-text-field
               autocomplete="off"
               autofocus
-              ref="name"
-              dense
-              outlined
-              v-model="name"
-              label="Your Name"
-              validate-on-blur
-              :rules="[() => !!name || 'This field is required']"
-              required
-            ></v-text-field>
-            <v-text-field
-              autocomplete="off"
-              ref="email"
-              dense
-              outlined
-              v-model="email"
-              label="Email"
-              :rules="[() => !!email || 'This field is required']"
-              type="email"
-              required
-            ></v-text-field>
-            <v-text-field
-              autocomplete="off"
               ref="password"
               dense
               outlined
@@ -150,8 +128,8 @@
                 :fab="isLoading"
                 :loading="isLoading"
                 :small="isLoading"
-                @click="registerHandle"
-                >Register</v-btn>
+                @click="forgotPassHandle"
+                >Reset Password</v-btn>
             </div>
           </div>
         </v-card-text>
@@ -196,7 +174,7 @@ export default {
     },
     isAvilable() {
       const avilable = this.notAvailable && this.notAvailable.includes(`88${this.phone}`);
-      return !avilable ? true : 'Username already exist';
+      return !avilable ? true : 'You are not registered';
     },
     lengthCheck() {
       return this.password.length <= 5 ? 'Length should be at least 6' : true;
@@ -208,8 +186,6 @@ export default {
     },
     form() {
       return {
-        name: this.name,
-        email: this.email,
         phone: this.phone,
         password: this.password,
       };
@@ -236,7 +212,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['IS_USERNAME_AVAILABLE', 'REGISTER']),
+    ...mapActions(['IS_USERNAME_AVAILABLE', 'FORGOT_PASSWORD']),
     focusEvent(e) {
       if (e.type === 'blur' && !this.phone) {
         this.prefixText = '';
@@ -252,13 +228,17 @@ export default {
       });
       return formHasErrors;
     },
-    async registerHandle() {
+    async forgotPassHandle() {
       this.isLoading = true;
       const formHasErrors = this.validdateForm();
       if (formHasErrors) return;
       try {
-        await this.REGISTER({ body: this.form, token: this.token });
-        this.$toast.success('Registration successful');
+        await this.FORGOT_PASSWORD({
+          phone: this.phone,
+          password: this.password,
+          token: this.token,
+        });
+        this.$toast.success('Password reset successful');
         this.$router.push('/');
       } catch (err) {
         // err
@@ -298,9 +278,9 @@ export default {
       if (isValid && this.isAvilable === true) {
         try {
           const isAvilable = await this.IS_USERNAME_AVAILABLE(number);
-          if (!isAvilable) {
+          if (isAvilable) {
             this.notAvailable.push(number);
-            this.$toast.error('Username already exist');
+            this.$toast.error('You are not registerd');
             this.isLoading = false;
             return;
           }

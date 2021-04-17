@@ -55,7 +55,7 @@
           <v-spacer></v-spacer>
           <div>
             <v-chip color="secondary" class="pl-5 pr-5">
-              {{balance}} : {{Math.abs(Trx.balance) || 0}}
+              {{balance}} : {{Trx.balance ? Math.abs(Trx.balance).toFixed(2) : 0}}
             </v-chip>
           </div>
         </v-card-title>
@@ -77,6 +77,7 @@
       </template>
       <template v-slot:item.orderId="{ item }">
         <v-btn @click="showOrder(item)"
+        v-if="item.orderId"
         depressed
         color="primary"
         roundeditem
@@ -92,7 +93,7 @@
         @click="loadMore"
         :loading="isFetching"
         small>Load More</v-btn>
-    </div>
+      </div>
         </v-card>
       </v-col>
       <v-col
@@ -117,7 +118,7 @@
             outlined
             small
             @click="genTrxCode">
-            Generate Trx COde
+            Request for Cash Out
             </v-btn>
         </v-card-text>
         </v-card>
@@ -129,7 +130,7 @@
 
 <script>
 import moment from 'moment';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import constants from '../../constants';
 
 export default {
@@ -166,7 +167,7 @@ export default {
       return this.Trx?.balance < 0 ? 'DUE' : 'BALANCE';
     },
     requestTime() {
-      return moment(this.Trx.updatedAt).format('dddd DD-MM-YYYY mm:hh A');
+      return moment(this.Trx.updatedAt).format('dddd DD-MM-YYYY hh:mm A');
     },
   },
   watch: {
@@ -184,7 +185,8 @@ export default {
     this.fetchTrxHistories(this.CurrentShop?.id);
   },
   methods: {
-    ...mapActions(['HISTORIES_BY_SHOP_ID', 'GENERATE_TRX_CODE_BY_SHOP_ID']),
+    ...mapActions(['HISTORIES_BY_SHOP_ID', 'GENERATE_TRX_CODE_BY_SHOP_ID', 'ORDER_BY_ID_AND_SHOP_ID']),
+    ...mapMutations(['setViewOrder']),
     genTrxCode() {
       this.trxCodeModal = true;
     },
@@ -192,7 +194,7 @@ export default {
       try {
         await this.GENERATE_TRX_CODE_BY_SHOP_ID({ amount: 0 });
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     },
     async confirmGenCode() {
@@ -202,16 +204,22 @@ export default {
         const { trxCode } = await this.GENERATE_TRX_CODE_BY_SHOP_ID({ amount: +this.amount });
         this.trxCode = trxCode;
         this.prompt = 2;
-        this.expireTime = moment(new Date()).add(3, 'days').format('DD, MMM YYYY hh:mmA');
+        this.expireTime = moment(new Date()).add(3, 'days').format('DD, MMM YYYY hh:mm A');
       } catch (err) {
         console.log(err);
       }
     },
-    showOrder(order) {
-      console.log(order);
+    async showOrder(item) {
+      try {
+        if (!item.orderId) return;
+        const order = await this.ORDER_BY_ID_AND_SHOP_ID(item?.orderId);
+        this.setViewOrder(order);
+      } catch (err) {
+        // console.log(err);
+      }
     },
     getTime({ createdAt }) {
-      return moment(createdAt).format('DD-MM-YYYY HH:MM:SS A');
+      return moment(createdAt).format('DD-MM-YYYY hh:mm A');
     },
     getColor({ paymentType }) {
       return paymentType === constants.paymentType.IN ? 'green' : 'red';

@@ -5,7 +5,7 @@
       class="mb-3 card-comp"
       max-width="300"
       min-width="180"
-      height="180"
+      height="200"
       outlined>
       <v-card-text class="text--primary center">
         <v-icon color="secondary" x-large>mdi-plus-circle</v-icon>

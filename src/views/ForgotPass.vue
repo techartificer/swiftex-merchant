@@ -1,15 +1,13 @@
 <template>
-  <div>
-    <Register />
-  </div>
+  <forgot-pass />
 </template>
 <script>
 import { mapGetters } from 'vuex';
-import Register from '../components/auth/Register.vue';
+import ForgotPass from '../components/auth/ForgotPass.vue';
 
 export default {
   components: {
-    Register,
+    ForgotPass,
   },
   computed: {
     ...mapGetters(['IsLoggedIn']),

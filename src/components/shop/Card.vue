@@ -3,7 +3,7 @@
     class="card-comp mb-3"
     max-width="300"
     min-width="180"
-    height="180"
+    height="200"
     outlined
   >
     <v-card-title @click="setCurrentShop" class="pointer">{{shop.name}}</v-card-title>

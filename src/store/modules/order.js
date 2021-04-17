@@ -5,8 +5,12 @@ export default {
     orders: [],
     trcakedOrder: null,
     showTrackDialog: '',
+    viewOrder: null,
   },
   mutations: {
+    setViewOrder(state, payload = null) {
+      state.viewOrder = payload;
+    },
     setOrders(state, data) {
       state.orders = data || [];
     },
@@ -20,14 +24,42 @@ export default {
     setTrackData(state, data) {
       state.trcakedOrder = data;
     },
+    updateOrder(state, data) {
+      const idx = state.orders.findIndex((o) => o.id === data.id);
+      const orders = state.orders?.splice(0);
+      orders[idx] = { ...orders[idx], ...data };
+      setImmediate(() => {
+        state.orders = orders;
+      });
+    },
   },
   actions: {
+    async ORDER_BY_ID_AND_SHOP_ID({ rootState }, orderId = '') {
+      try {
+        const { id: shopId } = rootState.shop.shop;
+        const { data } = await instance.get(`/order/id/${orderId}/shopId/${shopId}`);
+        return data.data;
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
     async TRACK_ORDER({ commit, state }, trackId = '') {
       try {
         if (!trackId) return {};
-        const { data } = await instance.get(`order/track/${trackId}`);
+        const { data } = await instance.get(`/order/track/${trackId}`);
         commit('setTrackData', data.data);
         state.showTrackDialog = trackId;
+        return data.data;
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
+    async UPDATE_ORDER({ commit, rootState }, payload = {}) {
+      try {
+        const { id, update } = payload;
+        const shopId = rootState?.shop?.shop?.id;
+        const { data } = await instance.patch(`/order/id/${id}/shopId/${shopId}`, update);
+        commit('updateOrder', data.data);
         return data.data;
       } catch (err) {
         return Promise.reject(err);
@@ -63,5 +95,6 @@ export default {
     Orders: (state) => state.orders,
     ShowTrackDialog: (state) => state.showTrackDialog,
     TrcakedOrder: (state) => state.trcakedOrder,
+    ViewOrder: (state) => state.viewOrder,
   },
 };
