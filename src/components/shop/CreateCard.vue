@@ -8,7 +8,7 @@
       height="200"
       outlined>
       <v-card-text class="text--primary center">
-        <v-icon color="secondary" x-large>mdi-plus-circle</v-icon>
+        <v-icon color="secondary" x-large>mdi-plus-circle-outline</v-icon>
         <div class="card-inner-text">Create New Shop</div>
       </v-card-text>
     </v-card>
@@ -44,7 +44,7 @@ export default {
 }
 .v-card__text.text--primary.center {
     text-align: center;
-    padding: 15%;
+    padding: 20%;
 }
 .card-inner-text {
     padding-top: 40px;

@@ -7,7 +7,7 @@
     outlined
   >
     <v-card-title @click="setCurrentShop" class="pointer">{{shop.name}}</v-card-title>
-    <v-card-text class="text--primary pointer" @click="setCurrentShop">
+    <v-card-text class="text--primary pointer text-body" @click="setCurrentShop">
       <div> {{shop.address}}</div>
       <div class="pt-1">+{{shop.phone}}</div>
     </v-card-text>
@@ -53,5 +53,8 @@ export default {
 }
 .pointer {
   cursor: pointer;
+}
+.text-body {
+  min-height: 85px;
 }
 </style>

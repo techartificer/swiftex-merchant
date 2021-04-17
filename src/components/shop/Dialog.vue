@@ -3,7 +3,7 @@
     v-model="show"
     scrollable
     >
-      <v-card height="900">
+      <v-card height="500">
         <v-card-text>
           <div
           class="create-shop"
@@ -26,15 +26,6 @@
                   :rules="[() => !!name || 'This field is required' ]"
                   outlined>
                   </v-text-field>
-                  <v-textarea
-                  ref="address"
-                  :rules="[() => !!address || 'This field is required' ]"
-                  rows="2"
-                  auto-grow
-                  outlined
-                  v-model="address"
-                  label="Address"
-                  dense> </v-textarea>
                   <v-autocomplete
                   :rules="[() => !!pickupArea || 'This field is required' ]"
                   ref="pickupArea"
@@ -44,15 +35,15 @@
                   dense
                   label="Pickup area"
                 ></v-autocomplete>
-                <v-autocomplete
-                  ref="deliveryZone"
-                  :rules="[() => !!deliveryZone || 'This field is required' ]"
-                  :items="pickupAreas"
+                <v-textarea
+                  ref="pickupAddress"
+                  rows="1"
+                  auto-grow
+                  :rules="[() => !!pickupAddress || 'This field is required' ]"
                   outlined
-                  v-model="deliveryZone"
-                  dense
-                  label="Preferred Delivery Zone"
-                ></v-autocomplete>
+                  v-model="pickupAddress"
+                  label="Pickup Address"
+                  dense> </v-textarea>
                 </v-col>
                 <v-col>
                   <v-text-field
@@ -66,15 +57,6 @@
                   dense
                   outlined>
                   </v-text-field>
-                  <v-textarea
-                  ref="pickupAddress"
-                  rows="2"
-                  auto-grow
-                  :rules="[() => !!pickupAddress || 'This field is required' ]"
-                  outlined
-                  v-model="pickupAddress"
-                  label="Pickup Address"
-                  dense> </v-textarea>
                   <v-text-field
                   ref="email"
                   :rules="[() => !!email || 'This field is required', emailValidate ]"
@@ -154,8 +136,6 @@ export default {
     form() {
       return {
         name: this.name,
-        address: this.address,
-        deliveryZone: this.deliveryZone,
         phone: this.phone,
         email: this.email,
         fbPage: this.fbPage,

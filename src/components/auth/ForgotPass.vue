@@ -20,7 +20,7 @@
     <v-card ref="form" class="mt-16" min-height="400"
      :class="{'pa-10': !isMobile}" outlined max-width="500">
       <v-card-text>
-          <div class="login">
+          <div class="login" @click="$router.push('/')">
             <img src="../../assets/logo.png" alt="logo" class="log-img">
           </div>
           <div v-if="!isOTPVerified">
@@ -324,6 +324,7 @@ export default {
 <style lang="scss" scoped>
 .login {
   text-align: center;
+  cursor: pointer;
 }
 .head {
   margin-top: 8%;
