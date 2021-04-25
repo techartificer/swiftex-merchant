@@ -47,10 +47,10 @@
                 <div class="payment">
                   <div class="payment-text">
                     <div>
-                      Ammount to be collected:
+                      Amount to be collected:
                     </div>
                     <div>
-                      <span class="title-bold-1">&#2547;</span>{{ViewOrder.price}}
+                      {{ViewOrder.price}}<span class="title-bold-1">&#2547;</span>
                     </div>
                   </div>
                   <div class="payment-text">
@@ -58,7 +58,7 @@
                       Delivery Charge:
                     </div>
                     <div>
-                      <span class="title-bold-1">&#2547;</span>{{ViewOrder.charge}}
+                      {{ViewOrder.charge}}<span class="title-bold-1">&#2547;</span>
                     </div>
                   </div>
                   <div class="payment-text">
@@ -66,7 +66,7 @@
                       COD Charge:
                     </div>
                     <div>
-                      <span class="title-bold-1">&#2547;</span>{{COD}}
+                      {{COD}}<span class="title-bold-1">&#2547;</span>
                     </div>
                   </div>
                   <div class="payment-text">
@@ -74,7 +74,7 @@
                       Total Payable amount:
                     </div>
                     <div>
-                      <span class="title-bold-1">&#2547;</span>{{payable}}
+                      {{payable}}<span class="title-bold-1">&#2547;</span>
                     </div>
                   </div>
                 </div>
@@ -121,7 +121,7 @@
                       Collectable Amount:
                     </div>
                     <div>
-                      <span class="title-bold-1">&#2547;</span>{{ViewOrder.price}}
+                      {{ViewOrder.price}}<span class="title-bold-1">&#2547;</span>
                     </div>
                   </div>
                 </div>

@@ -45,7 +45,7 @@
               ]"
               ref="price"
               v-model="price"
-              label="Price"
+              label="Collectable Amount"
               type="number"
               dense
               outlined>

@@ -246,10 +246,9 @@ export default {
         { text: 'Accepted', value: 'isAccepted' },
         { text: 'Area', value: 'recipientArea' },
         { text: 'City', value: 'recipientCity' },
-        { text: 'Price', value: 'price' },
+        { text: 'Collectable Amount', value: 'price' },
         { text: 'Current Status', value: 'currentStatus' },
         { text: 'Delivery Type', value: 'deliveryType' },
-        { text: '# of Items', value: 'numberOfItems' },
         { text: 'Delivered', value: 'deliveredAt' },
         { text: 'Actions', value: 'actions' },
       ];
