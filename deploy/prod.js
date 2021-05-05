@@ -1,6 +1,5 @@
 let baseURL = 'http://localhost:4141';
 if (process.env.NODE_ENV === 'production') {
-  baseURL = 'https://api.freshagric.com';
-  console.log('Prod: ', baseURL);
+  baseURL = 'https://api.swiftex.app';
 }
 module.exports = { baseURL };
