@@ -124,6 +124,14 @@
                       {{ViewOrder.price}}<span class="title-bold-1">&#2547;</span>
                     </div>
                   </div>
+                  <div class="payment-text fix">
+                    <div>
+                      Weight:
+                    </div>
+                    <div>
+                      {{ViewOrder.weight}} Kg
+                    </div>
+                  </div>
                 </div>
               </div>
             </v-col>
@@ -142,7 +150,7 @@ import { mapGetters, mapMutations } from 'vuex';
 
 export default {
   computed: {
-    ...mapGetters(['ViewOrder']),
+    ...mapGetters(['ViewOrder', 'CurrentShop']),
     isOrderViewAble: {
       get() {
         return !!this.ViewOrder;
@@ -155,7 +163,7 @@ export default {
       return moment(this.ViewOrder?.createdAt).format('ddd, DD MMM, YYYY hh:mm A');
     },
     COD() {
-      if (this.ViewOrder?.paymentStatus === 'COD') { return (this.ViewOrder?.price / 100) * 1; }
+      if (this.ViewOrder?.paymentStatus === 'COD') { return (this.ViewOrder?.price / 100) * this.CurrentShop.cod; }
       return 0;
     },
     payable() {
